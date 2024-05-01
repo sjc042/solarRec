@@ -13,14 +13,18 @@ This project is designed to acquire, process, and analyze satellite imagery to d
 - Access to Google Solar API and Maps Static API
 
 ### Installation
-1. Clone the repository:
-```bash
-git clone https://github.com/sjc042/solarRec.git
-```
-2. Install required Python packages:
-```bash
-pip install -r requirements.txt
-```
+1. Create Python environment with conda:
+    ```bash
+    conda create -n solarRec python=3.8
+    ```
+2. Clone the repository:
+    ```bash
+    git clone https://github.com/sjc042/solarRec.git
+    ```
+3. Open cloned project folder and install required Python packages:
+    ```bash
+    pip install -r requirements.txt
+    ```
 **DEV NOTE: requirements.txt to be added**
 
 
@@ -28,9 +32,9 @@ pip install -r requirements.txt
 1. Configure the API keys for Google Solar API in the configuration file.
 **DEV NOTE: implement configuration for API.**
 2. Run the main script to start the image processing and analysis:
-```bash
-python main.py
-```
+    ```bash
+    python main.py
+    ```
 
 ## Features
 - **Image Acquisition**: Downloads and processes GeoTiff images from satellite imagery services.

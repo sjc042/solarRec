@@ -1,0 +1,5 @@
+ultralytics
+pandas
+pillow
+numpy
+roboflow
