@@ -2,7 +2,7 @@
 # Satellite Imagery Analysis and Solar Capacity Estimation System 
 
 ## Introduction
-This project is designed to acquire, process, and analyze satellite imagery to detect solar panel arrays on residential rooftops and estimate the solar energy generation capacity. It integrates with satellite imagery services to provide granular energy generation estimates for urban planning and renewable energy assessments.
+This UW Capstone project (course EE487/598) is designed to acquire, process, and analyze satellite imagery to detect solar panel arrays on residential rooftops and estimate the solar energy generation capacity. It integrates with satellite imagery services to provide granular energy generation estimates for urban planning and renewable energy assessments.
 
 ## Getting Started
 
@@ -67,7 +67,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 - Developers and all contributors who have invested their time and effort.
 
 ## Contact
-For any queries, please contact [cielsun042@gmail.com](mailto:cielsun042@gmail.com).
+For any inquiries, please contact [cielsun042@gmail.com](mailto:cielsun042@gmail.com).
 
 ## Appendix
 - **A**: Glossary
