@@ -35,7 +35,9 @@ Navigate to the cloned project folder and install the necessary Python packages 
     cd solarRec
     pip install -r requirements.txt
     ```
-**DEV NOTE: requirements.txt to be modified**
+**DEV NOTE**:  
+- requirements.txt to be modified
+- need to add link to roboflow dataset
 
 
 ## Usage
