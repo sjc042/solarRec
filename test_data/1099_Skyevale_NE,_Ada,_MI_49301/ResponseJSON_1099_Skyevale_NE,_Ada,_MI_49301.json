@@ -1,0 +1,32 @@
+{
+  "imageryDate": {
+    "year": 2017,
+    "month": 7,
+    "day": 31
+  },
+  "imageryProcessedDate": {
+    "year": 2021,
+    "month": 2,
+    "day": 15
+  },
+  "dsmUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=8ce564f02603b654d8b0359c0a6f0f55-1a23e2018fb2aff90a4a48d84ea4c8dd",
+  "rgbUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=b82afbbd972c2acdfcbab2d297d25be0-fb87d10299ad583658963f0896d471a1",
+  "maskUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=f2605d70e89fb1d4deb9c95490d85a72-3b8e20ee1b9b23b073bcddf58d820c10",
+  "annualFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=6eb62de1f8f6ff244fea9b0e63e716a2-5919372c6f69e6acb5e3584657e4059c",
+  "monthlyFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=6b1e3d7804eef493dada2b85122efe8f-ffd0c5078c637eb7593921d3a870d52b",
+  "hourlyShadeUrls": [
+    "https://solar.googleapis.com/v1/geoTiff:get?id=6b9b47cc2178d14ebc62acb50f6d07b4-d6e3748e16370bba165531dc6aa3945b",
+    "https://solar.googleapis.com/v1/geoTiff:get?id=7a5532de7b75139f73bfb9ecbb236411-9524ed00f02a56df7a806c19a59a376d",
+    "https://solar.googleapis.com/v1/geoTiff:get?id=505181c950858ee90ff494bbbf7aaccd-43607080e03d46cdb7bf67cebc5775d0",
+    "https://solar.googleapis.com/v1/geoTiff:get?id=86ec4ff5b1372c8639498a23665492c9-ed1fa3c1849c3183374697f4d7e45b46",
+    "https://solar.googleapis.com/v1/geoTiff:get?id=340ba0c29e05ba065cc282b1d62dbdd1-6e1334b3fe41004fb544dbf1aad9587e",
+    "https://solar.googleapis.com/v1/geoTiff:get?id=cc825a11aa630ded11911483e60285c6-d08cceea08a1f3baf30b47a04591ccbb",
+    "https://solar.googleapis.com/v1/geoTiff:get?id=a4e0151b75ce83390af0bff692006984-99413129c8ae66660a0bbed592ec411c",
+    "https://solar.googleapis.com/v1/geoTiff:get?id=987606fbc33f0397a5d2df20870a93f1-a1e838ad16c2cb7d3a0315bdff216ffa",
+    "https://solar.googleapis.com/v1/geoTiff:get?id=db456c8b0466ac772756952af8722825-89355fe3b7517ade89e9c8b543112a1e",
+    "https://solar.googleapis.com/v1/geoTiff:get?id=dc16d9dd7576267b885d106b57bcf40b-4fe005b09b95fa72514a3ce8a4e3c82e",
+    "https://solar.googleapis.com/v1/geoTiff:get?id=3a3de8166433c7e9f1dd3d7927cd2d8f-acd51732bfdbe0fcae25c109daa56bed",
+    "https://solar.googleapis.com/v1/geoTiff:get?id=e15f4ec8303bafa4edf8bc6c83048b92-e840b586dc0c8054e428dcc0b5b9c481"
+  ],
+  "imageryQuality": "HIGH"
+}
