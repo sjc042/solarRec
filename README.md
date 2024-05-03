@@ -59,11 +59,23 @@ Navigate to the cloned project folder and install the necessary Python packages 
 - **Solar Capacity Estimation**: Estimates the BTM photovoltaic solar generation capacity from detected solar panels.
 
 ## Folder Structure
-- `/root`
-    - `/JSON` - Contains JSON files with image metadata.
-    - `/RGB` - Stores processed RGB images.
-    - `/MonthlyFlux` - Monthly solar flux data.
-    - `/DSM` - Digital Surface Model files.
+- `/solar-data-root`
+    - `/images`
+        - `rgb_address1.jpg`
+        - `rgb_address2.jpg`
+        - ...
+   - `/addresses`
+        - `/address1`
+            - `monthlyFlux_address1.tif`
+            - `DSM_address1.tif`
+            - `mask_address1.tif`
+            - `address1.json`
+        - `/address2`
+            - `monthlyFlux_address2.tif`
+            - `DSM_address2.tif`
+            - `mask_address2.tif`
+            - `address2.json`
+        - ...
 
 **DEV NOTE: share dataset on drive or other sources.**
 
