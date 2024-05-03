@@ -13,6 +13,10 @@ This UW Capstone project (course EE497/598) is designed to acquire, process, and
 - Ultralytics
 - API key for accessing Google Solar API and Maps Static API
 
+### Downloading Dataset
+- For our instance segmentation dataset with images collected from Google Solar: https://universe.roboflow.com/solarrecmoreimage/solarrecseg-y4it9
+- For bouding box dataset derived from [Duke University's dataset (Bradley et al.)](http://dx.doi.org/10.6084/m9.figshare.3385780.v1): https://universe.roboflow.com/solarrecmoreimage/duke-solar
+
 ### Installation
 Follow these steps to set up the project environment:
 
