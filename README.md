@@ -10,6 +10,7 @@ This UW Capstone project (course EE497/598) is designed to acquire, process, and
 - Python 3.8+
 - CUDA Toolkit 11.8+
 - PyTorch 2.2.2+
+- Ultralytics
 - API key for accessing Google Solar API and Maps Static API
 
 ### Installation
