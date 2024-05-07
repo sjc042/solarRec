@@ -6,6 +6,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 import os
+import argparse
+import pandas as pd
+
+import torch
+from ultralytics import YOLO
+
 
 def get_main_building_mask(mask_path):
     """
@@ -244,22 +250,105 @@ def estimate_monthly_flux(root, address, ann_path, month, display_mask=False):
 
     return panel_area, masked_monthly_flux_sum
 
+def detect_solar_panel(model_path, img_dir,
+                        save_dir=None, save_img=False, 
+                        save_crop=False, batch_size=30, 
+                        conf=0.1, iou=0.7, img_size=640):
+    """
+    Run YOLO model prediction on a specified image directory.
+
+    Args:
+    model_path (str): Path to the YOLO model checkpoint file.
+    img_dir (str): Image directory for prediction.
+    save_img (bool): Whether to save images with predictions.
+    save_crop (bool): Whether to save detected instances cropped from images.
+    batch_size (int): Batch size for processing images.
+    conf (float): Confidence threshold for detection.
+    iou (float): IOU threshold for detection.
+    img_size (int): Image size for processing.
+
+    Returns:
+    None
+    """
+    # Determine the computing device
+    if torch.backends.mps.is_available():
+        device = "mps"
+        print("Using Apple silicon mps device.")
+    elif torch.cuda.is_available():
+        device = "cuda"
+        print("Using Nvidia CUDA device.")
+    else:
+        device = "cpu"
+        print("Using CPU.")
+
+    # Check if the model path exists
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Model path '{model_path}' does not exist.")
+
+    # Check if the image directory exists
+    if not os.path.exists(img_dir):
+        raise FileNotFoundError(f"Image directory '{img_dir}' not found.")
+
+    model_exp_name = 'yolo' + model_path.split('yolo')[1].split('/')[0]
+    split = os.path.basename(os.path.dirname(img_dir))
+    exp_name = '_'.join(["predict", split, f'conf-{conf}', f'iou-{iou}', model_exp_name])
+
+    source = os.path.join(img_dir, '*.jpg')
+
+    if not save_dir:
+        save_dir = os.path.join(img_dir, "..", "detection_results")
+        os.makedirs(save_dir, exist_ok=True)
+
+    # Load pretrained model
+    model = YOLO(model_path)
+
+    # Use the model to predict
+    model.predict(source=source, name=exp_name, device=device, 
+                            batch=batch_size, imgsz=img_size,
+                            iou=iou, conf=conf, save_txt=True, 
+                            save_conf=True, save=save_img, save_crop=save_crop,
+                            save_dir=save_dir)
+    return save_dir
 
 
 
-def test1():
-    data_root = '/home/psc/Desktop/solarRec/API_Data_Generation/TestAddresses'
-    address = '1099_Skyevale_NE_Ada_MI_49301'
-    ann_path = '/home/psc/Desktop/PSC/Custom_Dataset/custom-dataset-2000-seg/valid/labels/1-Toll-Ln_18_quad_1_png.rf.41bc7cf400d0177429efd261cfb65b2c.txt'
-    month = 7
-    solarPanel_area, solarPanel_monthlyFlux = estimate_monthly_flux(data_root,
-                        address,
-                        ann_path,
-                        month,
-                        display_mask=True)
+def main():
+    # TODO: use argparser to parse input arguments
+    # for every address's images: 
+    #   inference solar panel detection with trained model weight
+    #   save txt results
+    # initialize results pandas dataframe with address, twelve months, and annual columns
+    # for every address:
+    #   if there is solar panel detected:
+    #       process results
+    #       save address, solar panel area, each month's and annual flux to dataframe
+    #   else:
+    #       mark null in dataframe for address, TODO: determine null value: 0
+    # Set up the argument parser
+    parser = argparse.ArgumentParser(description='Run YOLO model prediction.')
+    parser.add_argument('--model_path', type=str, default='checkpoints/yolov8l-seg_imgsz-640_100-epochs_batch-28_conf-0.5_iou-0.5_optimizer-auto_pretrain-coco_train_data-seg2000.pt',
+                        required=True, help='Path to the YOLO model checkpoint file.')
+    parser.add_argument('--data_root', type=str, required=True, help='Data root.')
+    parser.add_argument('--save_img', type=bool, default=False, help='If to save images with predictions.')
+    parser.add_argument('--save_crop', type=bool, default=False, help='If to save detected instances cropped from images.')
+    parser.add_argument('--batch_size', type=int, default=30, help='Batch size for processing images.')
+    parser.add_argument('--conf', type=float, default=0.1, help='Confidence threshold for detection.')
+    parser.add_argument('--iou', type=float, default=0.7, help='IOU threshold for detection.')
+    parser.add_argument('--img_size', type=int, default=640, help='Image size for processing.')
+    
+    args = parser.parse_args()
+    data_root = args.data_root
+    img_dir = os.path.join(data_root, "images")
+    if not os.path.exists(data_root):
+        raise FileNotFoundError(f"Data root directory '{data_root}' not found.")
+    
+    # NOTE: if no solar panel is detected there is no result file
+    detection_results_path = detect_solar_panel(args.model_path, img_dir,
+                                                save_dir=None, save_img=args.save_img, 
+                                                save_crop=args.save_crop, batch_size=args.batch_size, 
+                                                conf=args.conf, iou=args.iou, img_size=args.img_size)
 
-    print(f"Solar Panel Area: {solarPanel_area:.2f} m^2")
-    print(f"Solar Panel Monthly flux in month {month}: {solarPanel_monthlyFlux:.2f} kWh/kW/year")
 
-test1()
+
+
 
