@@ -5,7 +5,8 @@ import os
 
 # Set up the argument parser
 parser = argparse.ArgumentParser(description='Run YOLO model prediction.')
-parser.add_argument('--model_path', type=str, required=True, help='Path to the YOLO model file.')
+parser.add_argument('--model_path', type=str, default='checkpoints/yolov8l-seg_imgsz-640_100-epochs_batch-28_conf-0.5_iou-0.5_optimizer-auto_pretrain-coco_train_data-seg2000.pt',
+                    required=True, help='Path to the YOLO model checkpoint file.')
 parser.add_argument('--img_dir', type=str, required=True, help='Image directory for prediction. YOLOv9 folder organizaiton.')
 parser.add_argument('--save_img', type=bool, default=False, help='If to save images with predictions.')
 parser.add_argument('--save_crop', type=bool, default=False, help='If to save detected instances cropped from images.')

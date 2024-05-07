@@ -373,6 +373,7 @@ def process_address(address_path, detection_results_path, results_df, detected_a
         img_path = os.path.join(address_path, '..', '..', 'images', f'{img_name}.jpg')
         detection_mask = generate_detection_mask(img_path, ann_path)
         panel_area = count_area(detection_mask)
+        # FIXME: returned panel_area is too large, need to find cause
         monthly_flux = []
         for month in range (1, 13):
             flux = estimate_monthly_flux(address_path, ann_path, month, display_mask=False)
