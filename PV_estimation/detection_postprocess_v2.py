@@ -121,20 +121,29 @@ def generate_detection_mask(image_path, annotation_path):
 def count_area(mask, res=0.25):
     """
     Calculates the area represented by True (1) pixels in a binary mask, based on the resolution of the mask.
-
+    
     Args:
-    mask (ndarray): Numpy array containing values 0 and 1, where 1 or True indicates the presence of the area to be measured.
+    mask (numpy.ndarray): Numpy array containing values 0 and 1 or 0 and 255, where 1 or 255 indicates the presence of the area to be measured.
     res (float): Resolution of the mask in meters per pixel.
 
     Returns:
-    float: The total area in square meters represented by the True (1) pixels in the mask.
+    float: The total area in square meters represented by the True (1 or 255) pixels in the mask.
+
+    Raises:
+    ValueError: If the mask contains values other than [0, 1] or [0, 255].
     """
-    if mask.dtype != bool:
-        mask = mask.astype(bool)  # Ensure the mask is boolean for summing True values
+    unique_values = np.unique(mask)
+    if np.array_equal(unique_values, [0, 1]):
+        # Mask already in binary form with values 0 and 1
+        pixel_count = np.sum(mask)  # Sum all 1's
+    elif np.array_equal(unique_values, [0, 255]):
+        # Mask in form of 0 and 255, typical in some image formats
+        pixel_count = np.sum(mask == 255) / 255
+    else:
+        # If the mask contains any other values, raise an error
+        raise ValueError("Mask values must be either [0, 1] or [0, 255]. Found values: " + str(unique_values))
 
-    pix_area = np.sum(mask)  # Count of True/1 pixels in the mask
-
-    area = pix_area * res ** 2
+    area = pixel_count * (res ** 2)
     return area
 
 def get_masked_monthly_flux(building_mask, detection_mask, flux_map, display=False):
@@ -371,9 +380,8 @@ def process_address(address_path, detection_results_path, results_df, detected_a
         img_name = f'jpg_{address_name}'
         ann_path = os.path.join(detection_results_path, f'{img_name}.txt')
         img_path = os.path.join(address_path, '..', '..', 'images', f'{img_name}.jpg')
-        detection_mask = generate_detection_mask(img_path, ann_path)
+        detection_mask = generate_detection_mask(img_path, ann_path)  # mask values: [0, 255]
         panel_area = count_area(detection_mask)
-        # FIXME: returned panel_area is too large, need to find cause
         monthly_flux = []
         for month in range (1, 13):
             flux = estimate_monthly_flux(address_path, ann_path, month, display_mask=False)
