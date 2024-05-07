@@ -389,11 +389,14 @@ def process_address(address_path, detection_results_path, results_df, detected_a
         annual_flux = sum(monthly_flux)
         results_df.loc[len(results_df)] = [address_name] + [panel_area] + monthly_flux + [annual_flux]
 
-def main():
+def test1():
     # Replace these variables with actual paths or values needed for your specific use case
     data_root = '/home/psc/Desktop/solarRec/data/test_data'
     model_path = '/home/psc/Desktop/solarRec/detection/checkpoints/yolov8l-seg_imgsz-640_100-epochs_batch-28_conf-0.5_iou-0.5_optimizer-auto_pretrain-coco_train_data-seg2000.pt'
     run_detection_and_analysis(data_root, model_path, save_img=True)
 
+def main():
+    test1()
+    
 if __name__ == "__main__":
     main()
