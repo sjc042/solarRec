@@ -13,8 +13,8 @@ import io
 import numpy as np
 import json
 import subprocess
-from osgeo import gdal
-import xarray as xr
+# from osgeo import gdal
+# import xarray as xr
 import rasterio
 from PIL import Image
 import math
@@ -33,7 +33,7 @@ height = 3 # number of boxes tall the grid is
 width = 3 # number of boxes wide the grid is
 
 # Google API key
-api_key = 
+api_key = None
 geolocator = GoogleV3(api_key)
 
 # Alters failed addresses document title to be unique and not overwrite another file
@@ -188,7 +188,8 @@ if COORDS:
     coord_list = generate_grid(origin_coord, height, width)
     processCoordinates(coord_list, f"Grid_H={height}_W={width}_{origin_coord[0]}_{origin_coord[1]}")
 else:
-    for filename in os.listdir(SOURCE_FOLDER):
+    fnames = [fname for fname in os.listdir(SOURCE_FOLDER) if fname.endswith('.csv')]
+    for filename in fnames:
         processSpreadsheet(filename)
 
 

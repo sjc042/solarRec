@@ -1,0 +1,38 @@
+{
+    "imageryDate": {
+        "year": 2017,
+        "month": 7,
+        "day": 31
+    },
+    "imageryProcessedDate": {
+        "year": 2021,
+        "month": 2,
+        "day": 15
+    },
+    "dsmUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=e08cc3df5171522672fc5d69ac735204-0f32cfbca6205eeca45244ee04a98f0c",
+    "rgbUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=3c83960c03eb0a3cd819b8795aec8403-0c548de48ae94ec3c8b20a60dcaa481a",
+    "maskUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=60fd86b5de34737e087419c8a23223e8-5f84fb0e745ca977c1fb32325f28d7e1",
+    "annualFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=2b4572612b795a7d0d3796ca0ff6366d-6d12f5771f02449857eabd9e828a405c",
+    "monthlyFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=4cb16d685b3a71bc06c807aea16275fc-d8516218fc70dccfb6260cd05bb672d4",
+    "hourlyShadeUrls": [
+        "https://solar.googleapis.com/v1/geoTiff:get?id=47eb5a231786b01d4b19bacc4a7a16a0-eaecc2525ad4237f4a00f6deb7e9839c",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=7253f80819ed5278c37472bdebc045fd-0cb7482d21b9bdea5a8650e2fa9794c6",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=bd50fa820ae15abe776fa59d8243a579-29c2d51f41e4916b832ec69cb855c25a",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=1f5526b456863be0dee42ae80ee1a59d-0f978f85fe804afda004e35654e680e3",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=057ea90952b8a6c357cb79b89dce6e78-024a5fea46297ea357974dbe577b4856",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=7bf6a21eb16523e0c7c9fb16ea7c0ab1-5abdf76d735efc6ba036847c89294fa5",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=48b69e9e5804406b748918aceacf3fb0-3e38fc48544d78f957c610c1761f0d8d",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=43147af7eb369b44eaeedaab3b235778-493d61e11463081ad26ac17909acb495",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=1dc10732ab0515f5f07c48ad8ed20c3c-920d37afdd24027ba2f5bdb88e1efecf",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=2dbfcdb34357b3aa8f6a7ea2b9d35931-812cc70ee274e37bcfc7735c3ec7c1e9",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=4b9b3f39a153be7816dd86393548d230-b4fe1f4dfc29a152a9b3db45d96c52af",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=81bb46edc8e2d00e02574c6c21f82424-9c2c1c90dc3ce0c6d18abea13ffa1e17"
+    ],
+    "imageryQuality": "HIGH",
+    "imageCoord": "42.9838779 -85.5041284",
+    "imageRes": "0.25",
+    "imageAreaCoverage": "70",
+    "dsm_fname": "dsm_1099_Skyevale_NE_Ada_MI_49301.0.tif",
+    "mask_fname": "mask_1099_Skyevale_NE_Ada_MI_49301.0.tif",
+    "monthlyFlux_fname": "monthlyFlux_1099_Skyevale_NE_Ada_MI_49301.0.tif"
+}

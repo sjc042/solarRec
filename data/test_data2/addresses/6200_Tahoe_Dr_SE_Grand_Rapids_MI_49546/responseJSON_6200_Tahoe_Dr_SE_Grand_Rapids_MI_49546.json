@@ -1,0 +1,38 @@
+{
+    "imageryDate": {
+        "year": 2022,
+        "month": 6,
+        "day": 24
+    },
+    "imageryProcessedDate": {
+        "year": 2022,
+        "month": 10,
+        "day": 16
+    },
+    "dsmUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=8e4880e094b64c25d7581f76808a50ab-e3c64916dc71cc6650b67c775536c1ca",
+    "rgbUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=a86e844ee4c4b7073f5689fafe35e0fd-46d2fe83026f4af533330f253942cad3",
+    "maskUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=24ebb38c695cff86030b7cbb85b63f28-972e635de33fcf0f3304f11b3396121e",
+    "annualFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=37416b2c6f7ec8c646ed8e1e353ab0f8-3e151332fb65137cf43cdf4da284fefd",
+    "monthlyFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=cf72cfc21e1e7281572ebc30fe6390fc-ed7094fa0d6f65a02a6f196f4e7c45f2",
+    "hourlyShadeUrls": [
+        "https://solar.googleapis.com/v1/geoTiff:get?id=19cd70ee81263d40a202b80d332aba61-5507ca533c8effbe7a9f40f00c4cd6a4",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=3f6d2f9077da9f8dcd79652c3532a42d-910c9fe9b5d98f118c8dc1a7d65907e4",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=fac213f4fe3b3a8edac5e07b46cc0754-5d2723d917a25d79b3fa7636cc0aa22d",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=e658c82c836691d8ae7a454a885080a0-062754b6212bcac45b47d88f4e83fa16",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=da6302f1cbe9a5853357c8c4dc985d06-6f69062e32dd85ca5baa1633b4d19325",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=a6746aa5666314f4b7cc8c8cd751c4be-2a79c819888e2ee660ac43efa9b752b3",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=e0d4ea300b593f0ab0a9a0568055efc0-f7cfa2c10a159118584b9b4a84764e55",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=10b8296ace4fa848e2ce274d6427a16b-e7dae2b56c3b2f9a342ceccca03863c3",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=a90f9bc25a9d31313008d979d0eb1bfb-69a341e0eab269c7e965b2cf5e5dd511",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=ba19a42d13f784e61574aa831f6cc3de-b349aa5f6ebd7a6e9f183c7863ab2e62",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=b24c7a0d0e94f1ae0cb6aee25adff4f0-ee30fd806a248609c95a0867502ce87b",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=ef0dcc2da032a392b68ef7df29782bc7-ef7076380587ad2648992bad178349a9"
+    ],
+    "imageryQuality": "HIGH",
+    "imageCoord": "42.9090116 -85.5154225",
+    "imageRes": "0.25",
+    "imageAreaCoverage": "70",
+    "dsm_fname": "dsm_6200_Tahoe_Dr_SE_Grand_Rapids_MI_49546.tif",
+    "mask_fname": "mask_6200_Tahoe_Dr_SE_Grand_Rapids_MI_49546.tif",
+    "monthlyFlux_fname": "monthlyFlux_6200_Tahoe_Dr_SE_Grand_Rapids_MI_49546.tif"
+}

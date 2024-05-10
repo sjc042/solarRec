@@ -1,0 +1,38 @@
+{
+    "imageryDate": {
+        "year": 2022,
+        "month": 6,
+        "day": 24
+    },
+    "imageryProcessedDate": {
+        "year": 2022,
+        "month": 10,
+        "day": 16
+    },
+    "dsmUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=01a251416f972f5865daecc41c55ea8c-44dbf9de859e3581d3825679abb10e88",
+    "rgbUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=f760853ab9b05abd7769ffcd6b4005a8-cdf39b97982961d6d9d0fed3fd0a985b",
+    "maskUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=3f9e16298189afd071233f572597c8f7-28d7a0bb60abd3a26f5554b7666daea5",
+    "annualFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=01eb810c2386dbd5e50eb8c4b938ed59-ede962260619abc602b0d1ba1ea9f520",
+    "monthlyFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=d29b481729f9e1e34e543ae3c5bfdf6a-ae0ea68497225691f6529fa0d300acac",
+    "hourlyShadeUrls": [
+        "https://solar.googleapis.com/v1/geoTiff:get?id=81025199a14294aad848d275cec34834-2aa75aa3f3ce1e253fe0783fea75d2d5",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=bd278f902770cc5fe72ea01409550f18-fbcea96e1dd6c22d2f442359938228f9",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=47f53541bd06f711758412e732157367-21d7cc174e87cf2dd3fdd36a0b81379a",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=ca23422f03228279d7b693e7a1688480-be2c837bcb067e0d6c69f202e78a82d3",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=8b8481873065461c819640f435bc135a-c053bae09a3347e482afd83918f57352",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=c72b1aecb784c423bd00c810c97844a8-91ce0486f2aa7952a7e1b6a7aa13e06e",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=c053637d2132a20f2d78cab2f152e092-83d23b449ba08c3435fb8e7bf68074d2",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=d672631044a15fbd3e6b43d0cf03a263-049b873d0f9ff344620274c9e5924a6c",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=dc1cc08bc3e97563821d1d262600834b-828958c6e562cd6dd7d9765be8dd5e6e",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=bc55727ff43237de2234f647f09a0d0a-539937a2e6c36fe94f5ed233e896a57a",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=854c8af7bfcacd2070bcf96c60694cc4-b6c23836c5aa571a8c5f73177b3fd9d9",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=343ed66a00d40a73443974bdd97a9705-613d2cf2d6b3b78c50949832bfe0c784"
+    ],
+    "imageryQuality": "HIGH",
+    "imageCoord": "42.84147360000001 -85.7067383",
+    "imageRes": "0.25",
+    "imageAreaCoverage": "70",
+    "dsm_fname": "dsm_1672_68th_St_SW_Byron_Center_MI_49315.tif",
+    "mask_fname": "mask_1672_68th_St_SW_Byron_Center_MI_49315.tif",
+    "monthlyFlux_fname": "monthlyFlux_1672_68th_St_SW_Byron_Center_MI_49315.tif"
+}
