@@ -6,15 +6,10 @@ import os
 import pandas as pd
 from geopy.geocoders import GoogleV3
 import requests
-from IPython.display import Image, display
-from PIL import Image as im
-from pathlib import Path
-import io
+from IPython.display import Image
+from PIL import Image
 import numpy as np
 import json
-import subprocess
-# from osgeo import gdal
-# import xarray as xr
 import rasterio
 from PIL import Image
 import math
@@ -33,7 +28,7 @@ height = 3 # number of boxes tall the grid is
 width = 3 # number of boxes wide the grid is
 
 # Google API key
-api_key = None
+api_key = 
 geolocator = GoogleV3(api_key)
 
 # Alters failed addresses document title to be unique and not overwrite another file
@@ -84,62 +79,70 @@ def convert_geotiff_to_png(geotiff_path, jpg_path):
     for path in jpg_path:
         im.save(path)
 
-def request_and_save(request_url, solar_folder, location_name, latitude, longitude):
-    print("Request URL: " + request_url)
+def request_and_save(solar_folder, location_name, latitude, longitude):
+    # Tries HIGH requiredQuality
+    request_url_data = f"https://solar.googleapis.com/v1/dataLayers:get?location.latitude={latitude}&location.longitude={longitude}&radiusMeters={RADIUS}&view=FULL_LAYERS&requiredQuality=HIGH&pixelSizeMeters={PIXEL_SIZE_METERS}&key={api_key}"
     print("Location: " + location_name)
-    response = requests.get(request_url)
-    if response.status_code == 200:
-        if not os.path.exists(solar_folder):
-            os.makedirs(solar_folder)
-        # saves response
+    print("Request URL: " + request_url_data)
+    response = requests.get(request_url_data)
+    if response.status_code != 200:
+        # Tries MEDIUM requiredQuality
+        request_url_data = f"https://solar.googleapis.com/v1/dataLayers:get?location.latitude={latitude}&location.longitude={longitude}&radiusMeters={RADIUS}&view=FULL_LAYERS&requiredQuality=MEDIUM&pixelSizeMeters={PIXEL_SIZE_METERS}&key={api_key}"
+        print("Request URL: " + request_url_data)
+        response = requests.get(request_url_data)
+        if response.status_code != 200:
+            print(f"Failed to retrieve the Google Solar API response for location: {location_name}")
+            # Prints the failed addresses to a text file in the dest_folder path
+            with open(failed_locations_path, "a") as f:
+                f.write(location_name + "\n")
+                f.close()
+            return
 
-        new_data = {
-            "image_coord": f"{latitude} {longitude}",
-            "imageRes": f"{PIXEL_SIZE_METERS}",
-            "imageAreaCoverage": f"{RADIUS}",
-            "dsm_fname": f"dsm_{location_name}.tif",
-            "mask_fname": f"mask_{location_name}.tif",
-            "monthlyFlux_fname": f"monthlyFlux_{location_name}.tif"
-        }
+    if not os.path.exists(solar_folder):
+        os.makedirs(solar_folder)
+    # saves response
 
-        json_path = os.path.join(solar_folder, f"ResponseJSON_{location_name}.json")
-        with open(json_path, "wb") as json_file:
-            json_file.write(response.content)
+    new_data = {
+        "image_coord": f"{latitude} {longitude}",
+        "imageRes": f"{PIXEL_SIZE_METERS}",
+        "imageAreaCoverage": f"{RADIUS}",
+        "dsm_fname": f"dsm_{location_name}.tif",
+        "mask_fname": f"mask_{location_name}.tif",
+        "monthlyFlux_fname": f"monthlyFlux_{location_name}.tif"
+    }
 
-        with open(json_path, 'r') as json_file:
-            existing_data = json.load(json_file)
-        existing_data.update(new_data)
+    json_path = os.path.join(solar_folder, f"ResponseJSON_{location_name}.json")
+    with open(json_path, "wb") as json_file:
+        json_file.write(response.content)
 
-        with open(json_path, 'w') as json_file:
-            json.dump(existing_data, json_file, indent=4)
+    with open(json_path, 'r') as json_file:
+        existing_data = json.load(json_file)
+    existing_data.update(new_data)
 
-        # tags = ["dsmUrl", "rgbUrl", "maskUrl", "annualFluxUrl", "monthlyFluxUrl"]
-        tags = ["dsmUrl", "rgbUrl", "maskUrl", "monthlyFluxUrl"]
-        data = json.loads(response.content)
-        for tag in tags:
-            if tag in data:
-                url = data[tag]
-                geotiff_path = os.path.join(solar_folder, f"{tag[:-3]}_{location_name}.tif")
-                response = requests.get(url + f"&key={api_key}")
-                if response.status_code == 200:
-                    with open(geotiff_path, "wb") as geotiff_file:
-                        geotiff_file.write(response.content)
-                else:
-                    print(f"Failed to download GeoTiff {tag} for address: {location_name}")
+    with open(json_path, 'w') as json_file:
+        json.dump(existing_data, json_file, indent=4)
 
-                if tag == "rgbUrl":
-                    image_name = f"jpg_{location_name}.jpg"
-                    jpg_path = [os.path.join(solar_folder, image_name), os.path.join(all_images_path, image_name)]
-                    convert_geotiff_to_png(geotiff_path, jpg_path)
+    # tags = ["dsmUrl", "rgbUrl", "maskUrl", "annualFluxUrl", "monthlyFluxUrl"]
+    tags = ["dsmUrl", "rgbUrl", "maskUrl", "monthlyFluxUrl"]
+    data = json.loads(response.content)
+    for tag in tags:
+        if tag in data:
+            url = data[tag]
+            geotiff_path = os.path.join(solar_folder, f"{tag[:-3]}_{location_name}.tif")
+            response = requests.get(url + f"&key={api_key}")
+            if response.status_code == 200:
+                with open(geotiff_path, "wb") as geotiff_file:
+                    geotiff_file.write(response.content)
             else:
-                print(f"Failed to retrieve the {tag} tag for location: {location_name}")
-    else:
-        print(f"Failed to retrieve the Google Solar API response for location: {location_name}")
-        # Prints the failed addresses to a text file in the dest_folder path
-        with open(failed_locations_path, "a") as f:
-            f.write(location_name + "\n")
-            f.close()
+                print(f"Failed to download GeoTiff {tag} for address: {location_name}")
 
+            if tag == "rgbUrl":
+                image_name = f"jpg_{location_name}.jpg"
+                jpg_path = [os.path.join(solar_folder, image_name), os.path.join(all_images_path, image_name)]
+                convert_geotiff_to_png(geotiff_path, jpg_path)
+        else:
+            print(f"Failed to retrieve the {tag} tag for location: {location_name}")
+    
 
 def processSpreadsheet(file):
     df = pd.read_csv(os.path.join(SOURCE_FOLDER, file))
@@ -164,12 +167,10 @@ def processSpreadsheet(file):
         if location:
             latitude = location.latitude
             longitude = location.longitude
-
-            request_url_data = f"https://solar.googleapis.com/v1/dataLayers:get?location.latitude={latitude}&location.longitude={longitude}&radiusMeters={RADIUS}&view=FULL_LAYERS&requiredQuality=HIGH&pixelSizeMeters={PIXEL_SIZE_METERS}&key={api_key}"
             address_for_filename = full_address.replace('/', '-') # gets rid of / so it wont be confused as a file path
             address_for_filename = full_address.replace(' ', '_') # changes delimiter to _
             solar_folder = os.path.join(DEST_PATH, csv_folder_name, address_for_filename)
-            request_and_save(request_url_data, solar_folder, address_for_filename, latitude, longitude)
+            request_and_save(solar_folder, address_for_filename, latitude, longitude)
         else:
             print(f"Coordinates not found for the address: {full_address}")
         print()
@@ -180,18 +181,12 @@ def processCoordinates(coord_list, folder_name):
     for coord in coord_list:
         latitude = coord[0]
         longitude = coord[1]
-        request_url_data = f"https://solar.googleapis.com/v1/dataLayers:get?location.latitude={latitude}&location.longitude={longitude}&radiusMeters={RADIUS}&view=FULL_LAYERS&requiredQuality=HIGH&pixelSizeMeters={PIXEL_SIZE_METERS}&key={api_key}"
         solar_folder = os.path.join(DEST_PATH, folder_name, f"{latitude}_{longitude}")
-        request_and_save(request_url_data, solar_folder, f"{latitude}_{longitude}", latitude, longitude)
+        request_and_save(solar_folder, f"{latitude}_{longitude}", latitude, longitude)
 
 if COORDS:
     coord_list = generate_grid(origin_coord, height, width)
     processCoordinates(coord_list, f"Grid_H={height}_W={width}_{origin_coord[0]}_{origin_coord[1]}")
 else:
-    fnames = [fname for fname in os.listdir(SOURCE_FOLDER) if fname.endswith('.csv')]
-    for filename in fnames:
+    for filename in os.listdir(SOURCE_FOLDER):
         processSpreadsheet(filename)
-
-
-
-
