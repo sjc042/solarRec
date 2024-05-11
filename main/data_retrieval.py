@@ -171,38 +171,3 @@ def query_from_API(src, save_dir=None, RADIUS=70, PIXEL_SIZE_METERS=0.25):
     else:
         print(f"Input source is invalid of type {type(src)}.")
         print("Allowed value types: str (csv file path or address), list (of addresses or coordinates), tuple(coordinate latitude and longitude)")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def test1_ProcessCSV():
-    csv_path = '/home/psc/Desktop/solarRec/data/test_data2/TestAddresses.csv'
-    query_from_API(csv_path, save_dir=os.path.dirname(csv_path))
-
-
-
-
-
-
-def main():
-    test1_ProcessCSV()
-
-if __name__ == "__main__":
-    main()

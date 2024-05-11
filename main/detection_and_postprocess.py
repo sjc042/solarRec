@@ -299,7 +299,7 @@ def detect_solar_panel(model_path, img_dir,
     if not os.path.exists(img_dir):
         raise FileNotFoundError(f"Image directory '{img_dir}' not found.")
 
-    model_exp_name = 'yolo' + model_path.split('yolo')[1].split('/')[0]
+    model_exp_name = 'yolo' + model_path.split('yolo')[1].split('/')[0].split('.pt')[0]
     split = os.path.basename(os.path.dirname(img_dir))
     exp_name = '_'.join(["predict", split, f'conf-{conf}', f'iou-{iou}', model_exp_name])
 
