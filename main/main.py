@@ -6,13 +6,20 @@ import os
 def test1_ProcessCSV():
     csv_path = '/home/psc/Desktop/solarRec/data/test_data/TestAddresses.csv'
     src_dir = os.path.dirname(csv_path)
-    # query_from_API(csv_path, save_dir=src_dir)
+    query_from_API(csv_path, save_dir=src_dir)
     model_path = '/home/psc/Desktop/solarRec/detection/checkpoints/yolov8l-seg_imgsz-640_100-epochs_batch-28_conf-0.5_iou-0.5_optimizer-auto_pretrain-coco_train_data-seg2000.pt'
     run_detection_and_analysis(src_dir, model_path, save_img=True)
 
+def test2_addressList():
+    address_list = ['4125 187th Ave SE, Issaquah, WA 98027', '510 pays rd, Cle Elum, WA']
+    save_dir = '/home/psc/Desktop/solarRec/data/test_list'
+    query_from_API(address_list, save_dir=save_dir)
+    model_path = '/home/psc/Desktop/solarRec/detection/checkpoints/yolov8l-seg_imgsz-640_100-epochs_batch-28_conf-0.5_iou-0.5_optimizer-auto_pretrain-coco_train_data-seg2000.pt'
+    run_detection_and_analysis(save_dir, model_path, save_img=True)
+
 
 def main():
-    test1_ProcessCSV()
+    test2_addressList()
 
 if __name__ == "__main__":
     main()

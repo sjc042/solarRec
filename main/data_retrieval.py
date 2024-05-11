@@ -55,56 +55,57 @@ def query_from_API(src, save_dir=None, RADIUS=70, PIXEL_SIZE_METERS=0.25):
     def request_and_save(location_name, latitude, longitude, save_dir=None):
         """Request data from the Google Solar API and save the results."""
         print("Processing Location:", location_name)
-        request_url = f"https://solar.googleapis.com/v1/dataLayers:get?location.latitude={latitude}&location.longitude={longitude}&radiusMeters={RADIUS}&view=FULL_LAYERS&requiredQuality=HIGH&pixelSizeMeters={PIXEL_SIZE_METERS}&key={api_key}"
+        image_qualities = ["HIGH", "MEDIUM", "LOW"]
+        for quality in image_qualities:
+            request_url = f"https://solar.googleapis.com/v1/dataLayers:get?location.latitude={latitude}&location.longitude={longitude}&radiusMeters={RADIUS}&view=FULL_LAYERS&requiredQuality={quality}&pixelSizeMeters={PIXEL_SIZE_METERS}&key={api_key}"
+            response = requests.get(request_url)
+            if response.status_code == 200:
+                # Process and save the data from a successful response
+                address_dir = os.path.join(save_dir, 'addresses', location_name)
+                image_dir = os.path.join(save_dir, 'images')
+                os.makedirs(address_dir, exist_ok=True)
+                os.makedirs(image_dir, exist_ok=True)
 
-        response = requests.get(request_url)
-        if response.status_code != 200:
-            # TODO: save failed location to failed list
-            print(f"Failed to retrieve the Google Solar API response for location: {location_name}")
-            return
-        
-        address_dir = os.path.join(save_dir, 'addresses', location_name)
-        image_dir = os.path.join(save_dir, 'images')
-        os.makedirs(address_dir, exist_ok=True)
-        os.makedirs(image_dir, exist_ok=True)
+                # Save the response content in a JSON file
+                json_path = os.path.join(address_dir, f"responseJSON_{location_name}.json")
+                with open(json_path, "wb") as json_file:
+                    json_file.write(response.content)
 
-        new_data = {
-            "imageCoord": f"{latitude} {longitude}",
-            "imageRes": str(PIXEL_SIZE_METERS),
-            "imageAreaCoverage": str(RADIUS),
-            "dsm_fname": f"dsm_{location_name}.tif",
-            "mask_fname": f"mask_{location_name}.tif",
-            "monthlyFlux_fname": f"monthlyFlux_{location_name}.tif"
-        }
+                # Deserialize JSON content to process it
+                data = json.loads(response.content)
+                existing_data = {
+                    "imageCoord": f"{latitude} {longitude}",
+                    "imageRes": str(PIXEL_SIZE_METERS),
+                    "imageAreaCoverage": str(RADIUS),
+                    "dsm_fname": f"dsm_{location_name}.tif",
+                    "mask_fname": f"mask_{location_name}.tif",
+                    "monthlyFlux_fname": f"monthlyFlux_{location_name}.tif"
+                }
+                existing_data.update(data)
+                
+                # Save the merged data back to the JSON file
+                with open(json_path, 'w') as json_file:
+                    json.dump(existing_data, json_file, indent=4)
 
-        json_path = os.path.join(address_dir, f"responseJSON_{location_name}.json")
-        with open(json_path, "wb") as json_file:
-            json_file.write(response.content)
+                # Download and save the associated GeoTIFF files
+                tags = ["dsmUrl", "rgbUrl", "maskUrl", "monthlyFluxUrl"]
+                for tag in tags:
+                    if tag in data:
+                        url = data[tag] + f"&key={api_key}"
+                        response = requests.get(url)
+                        if response.status_code == 200:
+                            geotiff_path = os.path.join(address_dir, f"{tag.replace('Url', '')}_{location_name}.tif")
+                            with open(geotiff_path, "wb") as geotiff_file:
+                                geotiff_file.write(response.content)
+                            if tag == "rgbUrl":
+                                image_path = os.path.join(image_dir, f"{tag.replace('Url', '')}_{location_name}.jpg")
+                                convert_geotiff_to_image(geotiff_path, image_path)
+                        else:
+                            print(f"Failed to download GeoTiff {tag} for address: {location_name}")
+                return  # Exit after successful processing
 
-        with open(json_path, 'r') as json_file:
-            existing_data = json.load(json_file)
-        existing_data.update(new_data)
-
-        with open(json_path, 'w') as json_file:
-            json.dump(existing_data, json_file, indent=4)
-
-        tags = ["dsmUrl", "rgbUrl", "maskUrl", "monthlyFluxUrl"]
-        data = json.loads(response.content)
-        for tag in tags:
-            if tag in data:
-                url = data[tag] + f"&key={api_key}"
-                response = requests.get(url)
-                if response.status_code == 200:
-                    geotiff_path = os.path.join(address_dir, f"{tag.replace('Url', '')}_{location_name}.tif")
-                    with open(geotiff_path, "wb") as geotiff_file:
-                        geotiff_file.write(response.content)
-                    if tag == "rgbUrl":
-                        image_path = os.path.join(image_dir, f"{tag.replace('Url', '')}_{location_name}.jpg")
-                        convert_geotiff_to_image(geotiff_path, image_path)
-                else:
-                    print(f"Failed to download GeoTiff {tag} for address: {location_name}")
-            else:
-                print(f"Failed to retrieve the {tag} tag for location: {location_name}")
+        # If all qualities fail
+        print(f"Failed to retrieve the Google Solar API response for all quality levels for location: {location_name}")
 
     def parseAddressSheet(file_path):
         df = pd.read_csv(file_path, header=0)               # Assuming first row is column header
@@ -148,7 +149,7 @@ def query_from_API(src, save_dir=None, RADIUS=70, PIXEL_SIZE_METERS=0.25):
                 if coord:
                     latitude = coord.latitude
                     longitude = coord.longitude
-                    location_name = loc.replace('/', '-').replace(' ', '_')
+                    location_name = loc.replace('/', '-').replace('  ', '_').replace(' ', '_')
                     request_and_save(location_name, latitude, longitude, save_dir)
                 else:
                     # TODO: update geolocator failed location
