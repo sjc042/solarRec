@@ -1,5 +1,6 @@
 """
-This script performs post-processing for the detection results along with relevant solar information.
+This script performs detection and post-processing of detection results 
+along with relevant solar information.
 """
 import rasterio
 import matplotlib.pyplot as plt
@@ -102,8 +103,8 @@ def generate_detection_mask(image_path, annotation_path):
         # Read the annotations and draw each polygon on the mask
         with open(annotation_path, 'r') as file:
             for line in file:
-                # line format: class_id x1 y1 x2 y2 ...
-                coords = list(map(float, line.split()))[1:]
+                # line format: class_id x1 y1 x2 y2 ... conf
+                coords = list(map(float, line.split())) 
                 if len(coords) % 2 != 0:
                     raise ValueError("Coordinate pairs are incomplete in the annotations file.")
                 
@@ -121,20 +122,29 @@ def generate_detection_mask(image_path, annotation_path):
 def count_area(mask, res=0.25):
     """
     Calculates the area represented by True (1) pixels in a binary mask, based on the resolution of the mask.
-
+    
     Args:
-    mask (ndarray): Numpy array containing values 0 and 1, where 1 or True indicates the presence of the area to be measured.
+    mask (numpy.ndarray): Numpy array containing values 0 and 1 or 0 and 255, where 1 or 255 indicates the presence of the area to be measured.
     res (float): Resolution of the mask in meters per pixel.
 
     Returns:
-    float: The total area in square meters represented by the True (1) pixels in the mask.
+    float: The total area in square meters represented by the True (1 or 255) pixels in the mask.
+
+    Raises:
+    ValueError: If the mask contains values other than [0, 1] or [0, 255].
     """
-    if mask.dtype != bool:
-        mask = mask.astype(bool)  # Ensure the mask is boolean for summing True values
+    unique_values = np.unique(mask)
+    if np.array_equal(unique_values, [0, 1]):
+        # Mask already in binary form with values 0 and 1
+        pixel_count = np.sum(mask)  # Sum all 1's
+    elif np.array_equal(unique_values, [0, 255]):
+        # Mask in form of 0 and 255, typical in some image formats
+        pixel_count = np.sum(mask == 255) / 255
+    else:
+        # If the mask contains any other values, raise an error
+        raise ValueError("Mask values must be either [0, 1] or [0, 255]. Found values: " + str(unique_values))
 
-    pix_area = np.sum(mask)  # Count of True/1 pixels in the mask
-
-    area = pix_area * res ** 2
+    area = pixel_count * (res ** 2)
     return area
 
 def get_masked_monthly_flux(building_mask, detection_mask, flux_map, display=False):
@@ -195,14 +205,13 @@ def get_masked_monthly_flux(building_mask, detection_mask, flux_map, display=Fal
 
     return summed_monthlyFlux
 
-def estimate_monthly_flux(root, address, ann_path, month, display_mask=False):
+def estimate_monthly_flux(address_path, ann_path, month, display_mask=False):
     """
     Calculates the monthly solar flux for a specified address based on detection results and visualizes the 
     results if required.
 
     Args:
-    root (str): Base directory for data files.
-    address (str): Address identifier, formatted as '1099_Skyevale_NE,_Ada,_MI_49301'.
+    address_path (str): Path to the directory of the address being processed, containing geotiff files.
     ann_path (str): Path to the file containing detection results.
     month (int): Month number (1-12) for which flux is to be calculated.
     display_mask (bool): Flag to determine whether to display masks and results.
@@ -218,14 +227,14 @@ def estimate_monthly_flux(root, address, ann_path, month, display_mask=False):
     """
     if not (1 <= month <= 12):
         raise ValueError("Month must be between 1 and 12.")
-    
+    address = os.path.basename(address_path)
     # Construct file paths
     file_names = {
         "monthly_flux": f"monthlyFlux_{address}.tif",
         "building_mask": f"mask_{address}.tif",
         "rgb_image": f"rgb_{address}.tif"           # TODO: need to change image path
     }
-    files = {key: os.path.join(root, address, value) for key, value in file_names.items()}
+    files = {key: os.path.join(address_path, value) for key, value in file_names.items()}
 
     # Check for file existence
     missing_files = [name for name, path in files.items() if not os.path.exists(path)]
@@ -239,16 +248,17 @@ def estimate_monthly_flux(root, address, ann_path, month, display_mask=False):
             building_mask = src_mask.read(1)  # Assuming mask is single-band
 
         detection_mask = generate_detection_mask(files['rgb_image'], ann_path)
-        panel_area = count_area(detection_mask)
+        # panel_area = count_area(detection_mask)
         
         masked_monthly_flux = get_masked_monthly_flux(building_mask, detection_mask, month_flux_map, display=display_mask)
-        masked_monthly_flux_sum = masked_monthly_flux.sum()
+        masked_monthly_flux = masked_monthly_flux.sum()
     except rasterio.errors.RasterioIOError as e:
         raise FileNotFoundError(f"Rasterio failed to open files: {str(e)}")
     except Exception as e:
         raise Exception(f"An error occurred during processing: {str(e)}")
 
-    return panel_area, masked_monthly_flux_sum
+    return masked_monthly_flux
+    # return panel_area, masked_monthly_flux
 
 def detect_solar_panel(model_path, img_dir,
                         save_dir=None, save_img=False, 
@@ -307,48 +317,75 @@ def detect_solar_panel(model_path, img_dir,
                             batch=batch_size, imgsz=img_size,
                             iou=iou, conf=conf, save_txt=True, 
                             save_conf=True, save=save_img, save_crop=save_crop,
-                            save_dir=save_dir)
-    return save_dir
+                            project=save_dir)
+    results_dir = os.path.join(save_dir, exp_name, 'labels')
+    return results_dir
 
 
+def run_detection_and_analysis(data_root, model_path, save_img=False, save_crop=False, batch_size=30, conf=0.1, iou=0.7, img_size=640):
+    """
+    Run YOLO model prediction and process detection results with relevant solar information.
 
-def main():
-    # TODO: use argparser to parse input arguments
-    # for every address's images: 
-    #   inference solar panel detection with trained model weight
-    #   save txt results
-    # initialize results pandas dataframe with address, twelve months, and annual columns
-    # for every address:
-    #   if there is solar panel detected:
-    #       process results
-    #       save address, solar panel area, each month's and annual flux to dataframe
-    #   else:
-    #       mark null in dataframe for address, TODO: determine null value: 0
-    # Set up the argument parser
-    parser = argparse.ArgumentParser(description='Run YOLO model prediction.')
-    parser.add_argument('--model_path', type=str, default='checkpoints/yolov8l-seg_imgsz-640_100-epochs_batch-28_conf-0.5_iou-0.5_optimizer-auto_pretrain-coco_train_data-seg2000.pt',
-                        required=True, help='Path to the YOLO model checkpoint file.')
-    parser.add_argument('--data_root', type=str, required=True, help='Data root.')
-    parser.add_argument('--save_img', type=bool, default=False, help='If to save images with predictions.')
-    parser.add_argument('--save_crop', type=bool, default=False, help='If to save detected instances cropped from images.')
-    parser.add_argument('--batch_size', type=int, default=30, help='Batch size for processing images.')
-    parser.add_argument('--conf', type=float, default=0.1, help='Confidence threshold for detection.')
-    parser.add_argument('--iou', type=float, default=0.7, help='IOU threshold for detection.')
-    parser.add_argument('--img_size', type=int, default=640, help='Image size for processing.')
-    
-    args = parser.parse_args()
-    data_root = args.data_root
+    Args:
+    data_root (str): Root directory containing data files and image directories.
+    model_path (str): Path to the YOLO model checkpoint file.
+    save_img (bool): If True, saves images with predictions.
+    save_crop (bool): If True, saves detected instances cropped from images.
+    batch_size (int): Batch size for processing images.
+    conf (float): Confidence threshold for detection.
+    iou (float): IOU threshold for detection.
+    img_size (int): Image size for processing.
+
+    Raises:
+    FileNotFoundError: If the specified directories do not exist.
+    """
     img_dir = os.path.join(data_root, "images")
     if not os.path.exists(data_root):
         raise FileNotFoundError(f"Data root directory '{data_root}' not found.")
-    
-    # NOTE: if no solar panel is detected there is no result file
-    detection_results_path = detect_solar_panel(args.model_path, img_dir,
-                                                save_dir=None, save_img=args.save_img, 
-                                                save_crop=args.save_crop, batch_size=args.batch_size, 
-                                                conf=args.conf, iou=args.iou, img_size=args.img_size)
+    if not os.path.exists(img_dir):
+        raise FileNotFoundError(f"Image directory '{img_dir}' not found.")
 
+    # Detect solar panels and process results
+    detection_results_path = detect_solar_panel(model_path, img_dir,
+                                                save_dir=None, save_img=save_img, 
+                                                save_crop=save_crop, batch_size=batch_size, 
+                                                conf=conf, iou=iou, img_size=img_size)
 
+    # Initialize results pandas DataFrame with columns for address, panel area, twelve months, and annual flux
+    results_df = pd.DataFrame(columns=['Address', 'Panel_Area(m^2)', 'January_Flux', 'February_Flux', 'March_Flux', 'April_Flux',
+                                       'May_Flux', 'June_Flux', 'July_Flux', 'August_Flux', 'September_Flux', 
+                                       'October_Flux', 'November_Flux', 'December_Flux', 'Annual_Flux(kWh/kW/year)'])
 
+    address_dir = os.path.join(data_root, 'addresses')
+    detected_addresses = set(os.path.basename(address).replace('.txt', '').replace('rgb_', '') for address in os.listdir(detection_results_path))
+    # Process each address
+    for address in os.listdir(address_dir):
+        address_path = os.path.join(address_dir, address)
+        process_address(address_path, detection_results_path, results_df, detected_addresses)
 
+    # Save the DataFrame
+    results_df.to_csv(os.path.join(data_root, 'solar_flux_results.csv'), index=False)
+    print("Results saved to solar_flux_results.csv")
 
+def process_address(address_path, detection_results_path, results_df, detected_addresses):
+    """
+    Process detection results along with solar information for a given address 
+    and updates the results DataFrame.
+
+    Args:
+    address_path (str): Path to the directory of the address being processed, containing geotiff files.
+    results_df (pd.DataFrame): DataFrame where results are stored.
+    """
+    address_name = os.path.basename(address_path)
+    if address_name in detected_addresses:
+        img_name = f'rgb_{address_name}'
+        ann_path = os.path.join(detection_results_path, f'{img_name}.txt')
+        img_path = os.path.join(address_path, '..', '..', 'images', f'{img_name}.jpg')
+        detection_mask = generate_detection_mask(img_path, ann_path)  # mask values: [0, 255]
+        panel_area = count_area(detection_mask)
+        monthly_flux = []
+        for month in range (1, 13):
+            flux = estimate_monthly_flux(address_path, ann_path, month, display_mask=False)
+            monthly_flux.append(flux)
+        annual_flux = sum(monthly_flux)
+        results_df.loc[len(results_df)] = [address_name] + [panel_area] + monthly_flux + [annual_flux]

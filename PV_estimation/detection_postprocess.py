@@ -1,5 +1,6 @@
 """
-This script performs post-processing for the detection results along with relevant solar information.
+This script performs detection and post-processing of detection results 
+along with relevant solar information.
 """
 import rasterio
 import matplotlib.pyplot as plt
@@ -356,9 +357,10 @@ def run_detection_and_analysis(data_root, model_path, save_img=False, save_crop=
                                        'October_Flux', 'November_Flux', 'December_Flux', 'Annual_Flux(kWh/kW/year)'])
 
     address_dir = os.path.join(data_root, 'addresses')
-    detected_addresses = set(os.path.basename(address).replace('.txt', '').replace('jpg_', '') for address in os.listdir(detection_results_path))
+    detected_addresses = set(os.path.basename(address).replace('.txt', '').replace('rgb_', '') for address in os.listdir(detection_results_path))
     # Process each address
     for address in os.listdir(address_dir):
+        print(address)
         address_path = os.path.join(address_dir, address)
         process_address(address_path, detection_results_path, results_df, detected_addresses)
 
@@ -376,8 +378,9 @@ def process_address(address_path, detection_results_path, results_df, detected_a
     results_df (pd.DataFrame): DataFrame where results are stored.
     """
     address_name = os.path.basename(address_path)
+    print(address_name)
     if address_name in detected_addresses:
-        img_name = f'jpg_{address_name}'
+        img_name = f'rgb_{address_name}'
         ann_path = os.path.join(detection_results_path, f'{img_name}.txt')
         img_path = os.path.join(address_path, '..', '..', 'images', f'{img_name}.jpg')
         detection_mask = generate_detection_mask(img_path, ann_path)  # mask values: [0, 255]
@@ -387,6 +390,7 @@ def process_address(address_path, detection_results_path, results_df, detected_a
             flux = estimate_monthly_flux(address_path, ann_path, month, display_mask=False)
             monthly_flux.append(flux)
         annual_flux = sum(monthly_flux)
+        print(annual_flux)
         results_df.loc[len(results_df)] = [address_name] + [panel_area] + monthly_flux + [annual_flux]
 
 def test1():
