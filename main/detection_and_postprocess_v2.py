@@ -28,7 +28,6 @@ def get_main_building_mask(mask):
     mask_bin = np.uint8(mask * 255)
     contours, _ = cv2.findContours(mask_bin, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
-    # Calculate the center of the image
     image_center = np.array([mask.shape[1] / 2, mask.shape[0] / 2])
     
     min_dist = np.inf
@@ -45,44 +44,11 @@ def get_main_building_mask(mask):
                 min_dist = dist
                 closest_contour = contour
 
-    # Create a blank mask to draw the closest contour
     closest_contour_mask = np.zeros_like(mask)
-
-    # If a closest contour was found, draw it on the mask
     if closest_contour is not None:
         cv2.drawContours(closest_contour_mask, [closest_contour], -1, (1), thickness=cv2.FILLED)
 
     return closest_contour_mask
-
-def get_monthly_flux(filepath, month):
-    """
-    Retrieves the flux map for a specific month from a 12-band GeoTIFF file.
-
-    Args:
-    filepath (str): Path to the GeoTIFF file.
-    month (int): Month to retrieve (1 for January, 2 for February, ..., 12 for December).
-
-    Returns:
-    np.ndarray: A 2D array representing the flux map of the specified month.
-
-    Raises:
-    ValueError: If the month is not within the range 1 to 12, or if the file does not contain exactly 12 bands.
-    FileNotFoundError: If the GeoTIFF file cannot be accessed.
-    """
-    if month < 1 or month > 12:
-        raise ValueError("Invalid month. Please choose a value between 1 and 12.")
-    try:
-        with rasterio.open(filepath) as src:
-            if src.count != 12:
-                raise ValueError("The GeoTIFF file does not contain 12 bands, as required for monthly data.")
-
-            # Read the band corresponding to the specified month
-            data = src.read(month)  # Month 1 corresponds to band 1, and so on
-            
-            return data
-
-    except rasterio.errors.RasterioIOError as e:
-        raise FileNotFoundError(f"Unable to locate or read the file at {filepath}") from e
 
 def generate_detection_mask(image_path, annotation_path):
     """
@@ -106,27 +72,19 @@ def generate_detection_mask(image_path, annotation_path):
         with rasterio.open(image_path) as src:
             width, height = src.width, src.height
 
-        # Prepare a blank mask
         mask = np.zeros((height, width), dtype=np.uint8)
 
-        # Read the annotations and draw each polygon on the mask
         with open(annotation_path, 'r') as file:
             for line in file:
-                # Expected line format: class_id x1 y1 x2 y2 ... xn yn conf
                 parts = line.split()
-                
-                # Extract coordinates, ignoring class_id at the start and conf at the end
                 coords = list(map(float, parts[1:-1]))
                 
-                # Check if coordinates form complete pairs
                 if len(coords) % 2 != 0:
-                    raise ValueError("Coordinate pairs are incomplete in the annotations file.")
+                    raise ValueError("Coordinate pairs are incomplete.")
                 
-                # Convert normalized coordinates to actual image coordinates
                 points = np.array([(int(x * width), int(y * height))
-                                   for x, y in zip(coords[0::2], coords[1::2])], dtype=np.int32)
+                                for x, y in zip(coords[0::2], coords[1::2])], dtype=np.int32)
 
-                # Draw the polygon on the mask
                 cv2.fillPoly(mask, [points], color=255)
         return mask
 
@@ -137,6 +95,45 @@ def generate_detection_mask(image_path, annotation_path):
     except Exception as e:
         print(f"An error occurred while generating detection mask: {e}")
         raise
+
+def resize_mask_to_match_flux_map(mask, flux_map):
+    """
+    Resizes the mask to match the dimensions of the flux map.
+    """
+    flux_map_height, flux_map_width = flux_map.shape
+    return cv2.resize(mask, (flux_map_width, flux_map_height), interpolation=cv2.INTER_NEAREST)
+
+def get_combined_mask(building_mask, detection_mask, display=False):
+    if building_mask.shape != detection_mask.shape:
+        raise ValueError("Masks must have the same dimensions.")
+    # Combine the masks of same shape
+    combined_mask = np.logical_and(building_mask, detection_mask).astype(np.uint8)
+
+    if display:
+        # Visualize the results using subplots
+        fig, axs = plt.subplots(2, 2, figsize=(8, 6))  # Ensures axs is a 2x2 array of axes
+
+        # Visualization of the building mask
+        axs[0, 0].imshow(building_mask, cmap='gray')
+        axs[0, 0].set_title('Building Mask')
+        axs[0, 0].axis('on')
+
+        axs[0, 1].imshow(detection_mask, cmap='gray')
+        axs[0, 1].set_title('Detection Mask')
+        axs[0, 1].axis('on')
+
+        # Visualization of the initial combined mask before resizing
+        axs[1, 0].imshow(combined_mask, cmap='gray')
+        axs[1, 0].set_title('Combined Mask')
+        axs[1, 0].axis('on')
+
+        # Visualization of detection results
+        axs[1, 1].axis('off')
+
+        plt.tight_layout()  # Adjust layout to prevent overlap
+        plt.show()
+    
+    return combined_mask
 
 def count_area(mask, res=0.25):
     """
@@ -153,20 +150,23 @@ def count_area(mask, res=0.25):
     ValueError: If the mask contains values other than [0, 1] or [0, 255].
     """
     unique_values = np.unique(mask)
-    if np.array_equal(unique_values, [0, 1]):
-        # Mask already in binary form with values 0 and 1
+    
+    # Check if the mask is in the correct form or only contains a single value (0 or 255)
+    if set(unique_values).issubset({0, 1}):
+        # Mask already in binary form with 0 and/or 1
         pixel_count = np.sum(mask)  # Sum all 1's
-    elif np.array_equal(unique_values, [0, 255]):
-        # Mask in form of 0 and 255, typical in some image formats
-        pixel_count = np.sum(mask == 255) / 255
+    elif set(unique_values).issubset({0, 255}):
+        # Mask values in form of 0 and/or 255
+        pixel_count = np.sum(mask == 255)
     else:
         # If the mask contains any other values, raise an error
         raise ValueError("Mask values must be either [0, 1] or [0, 255]. Found values: " + str(unique_values))
 
+    # Calculate the total area
     area = pixel_count * (res ** 2)
     return area
 
-def get_masked_monthly_flux(building_mask, detection_mask, flux_map, display=False):
+def get_masked_monthly_flux(combined_mask, flux_map):
     """
     Applies a combined building and detection mask to a monthly flux map and visualizes the result.
 
@@ -179,114 +179,16 @@ def get_masked_monthly_flux(building_mask, detection_mask, flux_map, display=Fal
     Returns:
     numpy.ndarray: The masked monthly flux map.
     """
-    # Get dimensions of input masks and flux map
-    building_mask_height, building_mask_width = building_mask.shape
-    detection_mask_height, detection_mask_width = detection_mask.shape
-    flux_map_height, flux_map_width = flux_map.shape
-
-    # Resize masks if their dimensions do not match the flux map
-    if (building_mask_height != flux_map_height or building_mask_width != flux_map_width):
-        
-        # FIXME: use get_main_building_mask for generating building mask
-        building_mask = cv2.resize(building_mask, (flux_map_width, flux_map_height), interpolation=cv2.INTER_NEAREST)
-    if (detection_mask_height != flux_map_height or detection_mask_width != flux_map_width):
-        
-        # FIXME: detection mask is not correctly generated
-        detection_mask = cv2.resize(detection_mask, (flux_map_width, flux_map_height), interpolation=cv2.INTER_NEAREST)
-
-    # Combine the resized masks
-    combined_mask_resized = np.logical_and(building_mask, detection_mask).astype(np.uint8)
-
     # Apply the combined resized mask to the flux map
-    masked_flux_map = flux_map * combined_mask_resized
-
-    if display:
-        # Visualize the results using subplots
-        fig, axs = plt.subplots(2, 2, figsize=(8, 6))  # Ensures axs is a 2x2 array of axes
-
-        # Visualization of the building mask
-        axs[0, 0].imshow(building_mask, cmap='gray')
-        axs[0, 0].set_title('Building Mask after resizing')
-        axs[0, 0].axis('on')
-
-        # Visualization of the masked monthly flux map
-        image_masked_flux_map = axs[0, 1].imshow(masked_flux_map, cmap='viridis')
-        fig.colorbar(image_masked_flux_map, ax=axs[0, 1], label='Flux (kWh/kW/year)')
-        axs[0, 1].set_title('Combined Masked Monthly Flux Map')
-        axs[0, 1].axis('on')
-
-        # Visualization of the initial combined mask before resizing
-        axs[1, 0].imshow(combined_mask_resized, cmap='gray')
-        axs[1, 0].set_title('Combined Mask after resizing')
-        axs[1, 0].axis('on')
-
-        # Visualization of detection results
-        axs[1, 1].imshow(detection_mask, cmap='gray')
-        axs[1, 1].set_title('Detection mask')
-        axs[1, 1].axis('on')
-
-        plt.tight_layout()  # Adjust layout to prevent overlap
-        plt.show()
-
-    summed_monthlyFlux = np.sum(masked_flux_map)
-
-    return summed_monthlyFlux
-
-def estimate_monthly_flux(address_path, ann_path, month, display_mask=False):
-    """
-    Calculates the monthly solar flux for a specified address based on detection results and visualizes the 
-    results if required.
-
-    Args:
-    address_path (str): Path to the directory of the address being processed, containing geotiff files.
-    ann_path (str): Path to the file containing detection results.
-    month (int): Month number (1-12) for which flux is to be calculated.
-    display_mask (bool): Flag to determine whether to display masks and results.
-
-    Returns:
-    tuple: A tuple containing:
-        - Total panel area (float): The total area covered by solar panels in square meters.
-        - Sum of the masked monthly flux (float): The total monthly solar flux for the detected panels.
-    
-    Raises:
-    FileNotFoundError: If any required files are not found.
-    ValueError: If the month provided is not within the valid range.
-    """
-    if not (1 <= month <= 12):
-        raise ValueError("Month must be between 1 and 12.")
-    address = os.path.basename(address_path)
-    # Construct file paths
-    file_names = {
-        "monthly_flux": f"monthlyFlux_{address}.tif",
-        "building_mask": f"mask_{address}.tif",
-        "rgb_image": f"rgb_{address}.tif"           # TODO: need to change image path
-    }
-    files = {key: os.path.join(address_path, value) for key, value in file_names.items()}
-
-    # Check for file existence
-    missing_files = [name for name, path in files.items() if not os.path.exists(path)]
-    if missing_files:
-        raise FileNotFoundError(f"Missing files: {', '.join(missing_files)}")
     try:
-        # Load necessary data
-        with rasterio.open(files['monthly_flux']) as src_flux, \
-             rasterio.open(files['building_mask']) as src_mask:
-            month_flux_map = src_flux.read(month)
-            building_mask = src_mask.read(1)  # Assuming mask is single-band
-            main_building_mask = get_main_building_mask(building_mask)
-
-        detection_mask = generate_detection_mask(files['rgb_image'], ann_path)
-        # panel_area = count_area(detection_mask)
-        
-        masked_monthly_flux = get_masked_monthly_flux(main_building_mask, detection_mask, month_flux_map, display=display_mask)
-        masked_monthly_flux = masked_monthly_flux.sum()
-    except rasterio.errors.RasterioIOError as e:
-        raise FileNotFoundError(f"Rasterio failed to open files: {str(e)}")
+        masked_flux_map = flux_map * combined_mask
+        summed_monthly_flux = np.sum(masked_flux_map)
+        return summed_monthly_flux
+    except combined_mask.shape != flux_map.shape:
+        raise ValueError("Mask and flux map must have the same dimensions.")
     except Exception as e:
-        raise Exception(f"An error occurred during processing: {str(e)}")
-
-    return masked_monthly_flux
-    # return panel_area, masked_monthly_flux
+        print(f"An error occurred while computing masked monthyly flux: {e}")
+        raise
 
 def detect_solar_panel(model_path, img_dir,
                         save_dir=None, save_img=False, 
@@ -327,8 +229,8 @@ def detect_solar_panel(model_path, img_dir,
     if not os.path.exists(img_dir):
         raise FileNotFoundError(f"Image directory '{img_dir}' not found.")
 
-    model_exp_name = 'yolo' + model_path.split('yolo')[1].split('/')[0].split('.pt')[0]
-    split = os.path.basename(os.path.dirname(img_dir))
+    # model_exp_name = 'yolo' + model_path.split('yolo')[1].split('/')[0].split('.pt')[0]
+    # split = os.path.basename(os.path.dirname(img_dir))
     # exp_name = '_'.join(["predict", split, f'conf-{conf}', f'iou-{iou}', model_exp_name])
     exp_name = 'detection_results'
 
@@ -362,19 +264,44 @@ def process_address(address_path, detection_results_path, results_df, detected_a
     """
     address_name = os.path.basename(address_path)
     if address_name in detected_addresses:
-        img_name = f'rgb_{address_name}'
-        ann_path = os.path.join(detection_results_path, f'{img_name}.txt')
-        img_path = os.path.join(address_path, '..', '..', 'images', f'{img_name}.jpg')
-        detection_mask = generate_detection_mask(img_path, ann_path)  # mask values: [0, 255]
-        panel_area = count_area(detection_mask)
-        monthly_flux = []
-        for month in range (1, 13):
-            # TODO: after debugging mask, set display_mask to False
-            flux = estimate_monthly_flux(address_path, ann_path, month, display_mask=True)
-            monthly_flux.append(flux)
-        annual_flux = sum(monthly_flux)
-        results_df.loc[len(results_df)] = [address_name] + [panel_area] + monthly_flux + [annual_flux]
+        ann_path = os.path.join(detection_results_path, f'rgb_{address_name}.txt')
 
+        # Load necessary data
+        with rasterio.open(os.path.join(address_path, f'monthlyFlux_{address_name}.tif')) as src_flux, \
+             rasterio.open(os.path.join(address_path, f'mask_{address_name}.tif')) as src_mask, \
+             rasterio.open(os.path.join(address_path, f'rgb_{address_name}.tif')) as src_img:
+             
+            building_mask = src_mask.read(1)  # Assuming mask is single-band
+            main_building_mask = get_main_building_mask(building_mask)
+            detection_mask = generate_detection_mask(src_img.name, ann_path)
+
+            # Use the first month's flux map to determine the dimensions for resizing
+            sample_flux_map = src_flux.read(1)
+            
+            # Resize main_building_mask and detection_mask if they don't match the flux map size
+            if main_building_mask.shape != sample_flux_map.shape:
+                main_building_mask = resize_mask_to_match_flux_map(main_building_mask, sample_flux_map)
+            if detection_mask.shape != sample_flux_map.shape:
+                detection_mask = resize_mask_to_match_flux_map(detection_mask, sample_flux_map)
+            
+            combined_mask = get_combined_mask(main_building_mask, detection_mask, display=True)
+            panel_area = count_area(combined_mask)
+
+            monthly_flux = []
+            for month in range(1, 13):
+                month_flux_map = src_flux.read(month)
+                
+                # Ensure combined_mask matches the current month_flux_map dimensions
+                if combined_mask.shape != month_flux_map.shape:
+                    combined_mask = resize_mask_to_match_flux_map(combined_mask, month_flux_map)
+                
+                flux = get_masked_monthly_flux(combined_mask, month_flux_map)
+                monthly_flux.append(flux)
+            
+            annual_flux = sum(monthly_flux)
+            results_df.loc[len(results_df)] = [address_name, panel_area] + monthly_flux + [annual_flux]
+
+# TODO: add individual address masked detetction visualization
 def visualize_results(ann_path, img_path, mask_path):
     with rasterio.open(mask_path) as src_mask:
         building_mask = src_mask.read(1)  # Assuming mask is single-band

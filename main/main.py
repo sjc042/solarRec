@@ -1,5 +1,6 @@
 from data_retrieval import query_from_API
-from detection_and_postprocess import run_detection_and_analysis
+from detection_and_postprocess_v2 import run_detection_and_analysis
+
 
 import os
 
