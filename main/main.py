@@ -17,9 +17,15 @@ def test2_addressList():
     model_path = '/home/psc/Desktop/solarRec/detection/checkpoints/yolov8l-seg_imgsz-640_100-epochs_batch-28_conf-0.5_iou-0.5_optimizer-auto_pretrain-coco_train_data-seg2000.pt'
     run_detection_and_analysis(save_dir, model_path, save_img=True)
 
+def test3_addressTXT():
+    txt_file = '/home/psc/Desktop/solarRec/data/demo_data/addresses.txt'
+    save_dir = os.path.dirname(txt_file)
+    # query_from_API(txt_file, save_dir=save_dir)
+    model_path = '/home/psc/Desktop/solarRec/detection/checkpoints/yolov8l-seg_imgsz-640_100-epochs_batch-28_conf-0.5_iou-0.5_optimizer-auto_pretrain-coco_train_data-seg2000.pt'
+    run_detection_and_analysis(save_dir, model_path, save_img=True)
 
 def main():
-    test2_addressList()
+    test3_addressTXT()
 
 if __name__ == "__main__":
     main()

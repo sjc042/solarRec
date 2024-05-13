@@ -28,7 +28,7 @@ height = 3 # number of boxes tall the grid is
 width = 3 # number of boxes wide the grid is
 
 # Google API key
-api_key = 
+api_key = None
 geolocator = GoogleV3(api_key)
 
 # Alters failed addresses document title to be unique and not overwrite another file

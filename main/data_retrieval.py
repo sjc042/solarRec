@@ -1,11 +1,3 @@
-'''
-This script combines the three main components for the solar recognition system:
-1. Google Solar API query based on address
-2. Solar panel detection on aerial images
-3. Post-processing of detection results and estimating address-grained solar energy production.
-'''
-
-
 # Libraries for Google Solar API query
 import os
 import pandas as pd
@@ -17,10 +9,6 @@ import json
 import rasterio
 from dotenv import load_dotenv
 
-
-'''
-1. Google Solar API Query
-'''
 def convert_geotiff_to_image(geotiff_path, jpg_path):
     """Convert a GeoTIFF file to a JPEG image."""
     with rasterio.open(geotiff_path) as geotiff_file:
@@ -105,12 +93,11 @@ def query_from_API(src, save_dir=None, RADIUS=70, PIXEL_SIZE_METERS=0.25):
                 return  # Exit after successful processing
 
         # If all qualities fail
+        # TODO: add address to failed address list
         print(f"Failed to retrieve the Google Solar API response for all quality levels for location: {location_name}")
 
     def parseAddressSheet(file_path):
         df = pd.read_csv(file_path, header=0)               # Assuming first row is column header
-        # TODO: build a dataframe with original header but save failed rows
-        failed_indice = []
         location_list = []
         for index, row in df.iterrows():
             try:
@@ -133,6 +120,25 @@ def query_from_API(src, save_dir=None, RADIUS=70, PIXEL_SIZE_METERS=0.25):
             
         return location_list
 
+    def parseAddressTextFile(txt_path):
+        addresses = []
+        
+        with open(txt_path, 'r') as file:
+            for line in file:
+                clean_line = line.strip()
+                if clean_line:  # Check if the line is not empty
+                    # Try to parse the line as coordinates
+                    if ',' in clean_line and all(part.strip().replace('.', '', 1).replace('-', '', 1).isdigit() for part in clean_line.split(',')):
+                        # Split the line by comma and convert to a tuple of floats
+                        parts = clean_line.split(',')
+                        coordinates = (float(parts[0].strip()), float(parts[1].strip()))
+                        addresses.append(coordinates)
+                    else:
+                        # Otherwise, treat it as an address string
+                        addresses.append(clean_line)
+        
+        return addresses
+
     def processList(location_list, save_dir):
         geolocator = GoogleV3(api_key)
         for loc in location_list:
@@ -152,11 +158,9 @@ def query_from_API(src, save_dir=None, RADIUS=70, PIXEL_SIZE_METERS=0.25):
                     location_name = loc.replace('/', '-').replace('  ', '_').replace(' ', '_')
                     request_and_save(location_name, latitude, longitude, save_dir)
                 else:
-                    # TODO: update geolocator failed location
                     print(f"Failed to geocode address: {loc}")
             else:
                 print(f"Skipping invalid location input: {loc}.")
-    
     
     failed_fname = "Failed_Google_Solar_Locations"          # name for failed locations file. Do not add file type at the end
     # Alters failed addresses document title to be unique and not overwrite another file
@@ -166,6 +170,9 @@ def query_from_API(src, save_dir=None, RADIUS=70, PIXEL_SIZE_METERS=0.25):
         processList(src, save_dir=save_dir)
     elif isinstance(src, str) and src.endswith('.csv'):
         loc_list = parseAddressSheet(src)
+        processList(loc_list, save_dir)
+    elif isinstance(src, str) and src.endswith('.txt'):
+        loc_list = parseAddressTextFile(src)
         processList(loc_list, save_dir)
     elif isinstance(src, str) or isinstance(src, tuple):       # input is a single address
         processList([src], save_dir=save_dir)

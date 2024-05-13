@@ -167,8 +167,12 @@ def get_masked_monthly_flux(building_mask, detection_mask, flux_map, display=Fal
 
     # Resize masks if their dimensions do not match the flux map
     if (building_mask_height != flux_map_height or building_mask_width != flux_map_width):
+        
+        # FIXME: use get_main_building_mask for generating building mask
         building_mask = cv2.resize(building_mask, (flux_map_width, flux_map_height), interpolation=cv2.INTER_NEAREST)
     if (detection_mask_height != flux_map_height or detection_mask_width != flux_map_width):
+        
+        # FIXME: detection mask is not correctly generated
         detection_mask = cv2.resize(detection_mask, (flux_map_width, flux_map_height), interpolation=cv2.INTER_NEAREST)
 
     # Combine the resized masks
@@ -181,22 +185,26 @@ def get_masked_monthly_flux(building_mask, detection_mask, flux_map, display=Fal
         # Visualize the results using subplots
         fig, axs = plt.subplots(2, 2, figsize=(8, 6))  # Ensures axs is a 2x2 array of axes
 
-        # Visualization of the combined mask after resizing
-        image_combined_mask_resized = axs[0, 0].imshow(combined_mask_resized, cmap='gray')
-        axs[0, 0].set_title('Combined Mask after resizing')
+        # Visualization of the building mask
+        axs[0, 0].imshow(building_mask, cmap='gray')
+        axs[0, 0].set_title('Building Mask after resizing')
         axs[0, 0].axis('on')
 
         # Visualization of the masked monthly flux map
         image_masked_flux_map = axs[0, 1].imshow(masked_flux_map, cmap='viridis')
         fig.colorbar(image_masked_flux_map, ax=axs[0, 1], label='Flux (kWh/kW/year)')
-        axs[0, 1].set_title('Masked Monthly Flux Map')
+        axs[0, 1].set_title('Combined Masked Monthly Flux Map')
         axs[0, 1].axis('on')
 
         # Visualization of the initial combined mask before resizing
-        axs[1, 0].axis('off')
+        axs[1, 0].imshow(combined_mask_resized, cmap='gray')
+        axs[1, 0].set_title('Combined Mask after resizing')
+        axs[1, 0].axis('on')
 
-        # Leave one subplot empty (bottom-right)
-        axs[1, 1].axis('off')
+        # Visualization of detection results
+        axs[1, 1].imshow(detection_mask, cmap='gray')
+        axs[1, 1].set_title('Detection mask')
+        axs[1, 1].axis('on')
 
         plt.tight_layout()  # Adjust layout to prevent overlap
         plt.show()
@@ -301,12 +309,14 @@ def detect_solar_panel(model_path, img_dir,
 
     model_exp_name = 'yolo' + model_path.split('yolo')[1].split('/')[0].split('.pt')[0]
     split = os.path.basename(os.path.dirname(img_dir))
-    exp_name = '_'.join(["predict", split, f'conf-{conf}', f'iou-{iou}', model_exp_name])
+    # exp_name = '_'.join(["predict", split, f'conf-{conf}', f'iou-{iou}', model_exp_name])
+    exp_name = 'detection_results'
 
     source = os.path.join(img_dir, '*.jpg')
 
     if not save_dir:
-        save_dir = os.path.join(img_dir, "..", "detection_results")
+        # save_dir = os.path.join(img_dir, "..", "detection_results")
+        save_dir = os.path.join(img_dir, "..")
         os.makedirs(save_dir, exist_ok=True)
 
     # Load pretrained model
@@ -317,9 +327,37 @@ def detect_solar_panel(model_path, img_dir,
                             batch=batch_size, imgsz=img_size,
                             iou=iou, conf=conf, save_txt=True, 
                             save_conf=True, save=save_img, save_crop=save_crop,
-                            project=save_dir)
+                            project=save_dir, show_labels=False)
     results_dir = os.path.join(save_dir, exp_name, 'labels')
     return results_dir
+
+def process_address(address_path, detection_results_path, results_df, detected_addresses):
+    """
+    Process detection results along with solar information for a given address 
+    and updates the results DataFrame.
+
+    Args:
+    address_path (str): Path to the directory of the address being processed, containing geotiff files.
+    results_df (pd.DataFrame): DataFrame where results are stored.
+    """
+    address_name = os.path.basename(address_path)
+    if address_name in detected_addresses:
+        img_name = f'rgb_{address_name}'
+        ann_path = os.path.join(detection_results_path, f'{img_name}.txt')
+        img_path = os.path.join(address_path, '..', '..', 'images', f'{img_name}.jpg')
+        detection_mask = generate_detection_mask(img_path, ann_path)  # mask values: [0, 255]
+        panel_area = count_area(detection_mask)
+        monthly_flux = []
+        for month in range (1, 13):
+            # TODO: after debugging mask, set display_mask to False
+            flux = estimate_monthly_flux(address_path, ann_path, month, display_mask=True)
+            monthly_flux.append(flux)
+        annual_flux = sum(monthly_flux)
+        results_df.loc[len(results_df)] = [address_name] + [panel_area] + monthly_flux + [annual_flux]
+
+def visualize_results(ann_path, img_path, mask_path):
+    with rasterio.open(mask_path) as src_mask:
+        building_mask = src_mask.read(1)  # Assuming mask is single-band
 
 
 def run_detection_and_analysis(data_root, model_path, save_img=False, save_crop=False, batch_size=30, conf=0.1, iou=0.7, img_size=640):
@@ -367,25 +405,3 @@ def run_detection_and_analysis(data_root, model_path, save_img=False, save_crop=
     results_df.to_csv(os.path.join(data_root, 'solar_flux_results.csv'), index=False)
     print("Results saved to solar_flux_results.csv")
 
-def process_address(address_path, detection_results_path, results_df, detected_addresses):
-    """
-    Process detection results along with solar information for a given address 
-    and updates the results DataFrame.
-
-    Args:
-    address_path (str): Path to the directory of the address being processed, containing geotiff files.
-    results_df (pd.DataFrame): DataFrame where results are stored.
-    """
-    address_name = os.path.basename(address_path)
-    if address_name in detected_addresses:
-        img_name = f'rgb_{address_name}'
-        ann_path = os.path.join(detection_results_path, f'{img_name}.txt')
-        img_path = os.path.join(address_path, '..', '..', 'images', f'{img_name}.jpg')
-        detection_mask = generate_detection_mask(img_path, ann_path)  # mask values: [0, 255]
-        panel_area = count_area(detection_mask)
-        monthly_flux = []
-        for month in range (1, 13):
-            flux = estimate_monthly_flux(address_path, ann_path, month, display_mask=False)
-            monthly_flux.append(flux)
-        annual_flux = sum(monthly_flux)
-        results_df.loc[len(results_df)] = [address_name] + [panel_area] + monthly_flux + [annual_flux]
