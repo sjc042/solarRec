@@ -40,6 +40,9 @@ def query_from_API(src, save_dir=None, RADIUS=70, PIXEL_SIZE_METERS=0.25):
         raise ValueError("API Key not found. Please check your .env file.")
     print("API Key found.")
 
+    
+    failed_addresses = []  # List to track failed addresses
+
     def request_and_save(location_name, latitude, longitude, save_dir=None):
         """Request data from the Google Solar API and save the results."""
         print("Processing Location:", location_name)
@@ -92,9 +95,9 @@ def query_from_API(src, save_dir=None, RADIUS=70, PIXEL_SIZE_METERS=0.25):
                             print(f"Failed to download GeoTiff {tag} for address: {location_name}")
                 return  # Exit after successful processing
 
-        # If all qualities fail
-        # TODO: add address to failed address list
+        # If all qualities fail, add address to failed list
         print(f"Failed to retrieve the Google Solar API response for all quality levels for location: {location_name}")
+        failed_addresses.append(location_name)
 
     def parseAddressSheet(file_path):
         df = pd.read_csv(file_path, header=0)               # Assuming first row is column header
@@ -179,3 +182,10 @@ def query_from_API(src, save_dir=None, RADIUS=70, PIXEL_SIZE_METERS=0.25):
     else:
         print(f"Input source is invalid of type {type(src)}.")
         print("Allowed value types: str (csv file path or address), list (of addresses or coordinates), tuple(coordinate latitude and longitude)")
+
+    # Write failed addresses to a file
+    if failed_addresses:
+        with open(failed_fpath, 'w') as f:
+            for address in failed_addresses:
+                f.write(f"{address}\n")
+        print(f"Failed addresses have been written to {failed_fpath}")
