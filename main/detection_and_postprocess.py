@@ -14,22 +14,23 @@ import torch
 from ultralytics import YOLO
 
 
-def get_main_building_mask(mask_path):
+def get_main_building_mask(mask):
     """
     Finds the contour closest to the center of the image from a binary mask and returns a mask with only that contour.
 
     Args:
-    mask_path (str): Path to the binary mask GeoTIFF file.
+    mask (np.ndarray): A binary mask array where the building areas are expected to be 1s.
 
     Returns:
     np.ndarray: A mask with the closest contour to the center of the image filled, value 0/1.
     """
-    with rasterio.open(mask_path) as src:
-        mask = src.read(1)
-        mask_bin = np.uint8(mask * 255)
-
+    # Convert the binary mask to a format suitable for findContours
+    mask_bin = np.uint8(mask * 255)
     contours, _ = cv2.findContours(mask_bin, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    image_center = np.array([src.width / 2, src.height / 2])
+    
+    # Calculate the center of the image
+    image_center = np.array([mask.shape[1] / 2, mask.shape[0] / 2])
+    
     min_dist = np.inf
     closest_contour = None
 
@@ -44,10 +45,13 @@ def get_main_building_mask(mask_path):
                 min_dist = dist
                 closest_contour = contour
 
-    # Create a blank mask and draw the closest contour filled
+    # Create a blank mask to draw the closest contour
     closest_contour_mask = np.zeros_like(mask)
-    cv2.drawContours(closest_contour_mask, [closest_contour], -1, (1), thickness=cv2.FILLED)
-    
+
+    # If a closest contour was found, draw it on the mask
+    if closest_contour is not None:
+        cv2.drawContours(closest_contour_mask, [closest_contour], -1, (1), thickness=cv2.FILLED)
+
     return closest_contour_mask
 
 def get_monthly_flux(filepath, month):
@@ -88,33 +92,48 @@ def generate_detection_mask(image_path, annotation_path):
     Args:
     image_path (str): Path to the image for which the mask is to be created.
     annotation_path (str): Path to the text file containing normalized polygon coordinates.
+
+    Returns:
+    np.ndarray: A mask where polygons are filled based on the annotations.
+
     Raises:
     FileNotFoundError: If the image or annotation file cannot be found.
+    ValueError: If there are incomplete coordinate pairs in the annotations.
     Exception: For any other errors during the execution.
     """
     try:
         # Load the image to find out the dimensions using rasterio
         with rasterio.open(image_path) as src:
             width, height = src.width, src.height
-        
+
         # Prepare a blank mask
         mask = np.zeros((height, width), dtype=np.uint8)
 
         # Read the annotations and draw each polygon on the mask
         with open(annotation_path, 'r') as file:
             for line in file:
-                # line format: class_id x1 y1 x2 y2 ... conf
-                coords = list(map(float, line.split())) 
+                # Expected line format: class_id x1 y1 x2 y2 ... xn yn conf
+                parts = line.split()
+                
+                # Extract coordinates, ignoring class_id at the start and conf at the end
+                coords = list(map(float, parts[1:-1]))
+                
+                # Check if coordinates form complete pairs
                 if len(coords) % 2 != 0:
                     raise ValueError("Coordinate pairs are incomplete in the annotations file.")
                 
-                points = np.array([(int(coords[i] * width), int(coords[i + 1] * height)) 
-                                   for i in range(0, len(coords), 2)], dtype=np.int32)
-                cv2.fillPoly(mask, [points], 255)  # 255 to fill the mask in white
+                # Convert normalized coordinates to actual image coordinates
+                points = np.array([(int(x * width), int(y * height))
+                                   for x, y in zip(coords[0::2], coords[1::2])], dtype=np.int32)
+
+                # Draw the polygon on the mask
+                cv2.fillPoly(mask, [points], color=255)
         return mask
+
     except FileNotFoundError as e:
         print(f"File not found: {e}")
         raise
+
     except Exception as e:
         print(f"An error occurred while generating detection mask: {e}")
         raise
@@ -254,11 +273,12 @@ def estimate_monthly_flux(address_path, ann_path, month, display_mask=False):
              rasterio.open(files['building_mask']) as src_mask:
             month_flux_map = src_flux.read(month)
             building_mask = src_mask.read(1)  # Assuming mask is single-band
+            main_building_mask = get_main_building_mask(building_mask)
 
         detection_mask = generate_detection_mask(files['rgb_image'], ann_path)
         # panel_area = count_area(detection_mask)
         
-        masked_monthly_flux = get_masked_monthly_flux(building_mask, detection_mask, month_flux_map, display=display_mask)
+        masked_monthly_flux = get_masked_monthly_flux(main_building_mask, detection_mask, month_flux_map, display=display_mask)
         masked_monthly_flux = masked_monthly_flux.sum()
     except rasterio.errors.RasterioIOError as e:
         raise FileNotFoundError(f"Rasterio failed to open files: {str(e)}")
