@@ -14,9 +14,9 @@ def test1_ProcessCSV():
 def test2_addressList():
     address_list = ['4125 187th Ave SE, Issaquah, WA 98027', '510 pays rd, Cle Elum, WA']
     save_dir = '/home/psc/Desktop/solarRec/data/test_list'
-    query_from_API(address_list, save_dir=save_dir)
+    # query_from_API(address_list, save_dir=save_dir)
     model_path = '/home/psc/Desktop/solarRec/detection/checkpoints/yolov8l-seg_imgsz-640_100-epochs_batch-28_conf-0.5_iou-0.5_optimizer-auto_pretrain-coco_train_data-seg2000.pt'
-    run_detection_and_analysis(save_dir, model_path, save_img=True)
+    run_detection_and_analysis(save_dir, model_path, save_img=True, conf=0.1)
 
 def test3_addressTXT():
     txt_file = '/home/psc/Desktop/solarRec/data/demo_data/addresses.txt'

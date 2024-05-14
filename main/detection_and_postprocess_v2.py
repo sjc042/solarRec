@@ -96,12 +96,12 @@ def generate_detection_mask(image_path, annotation_path):
         print(f"An error occurred while generating detection mask: {e}")
         raise
 
-def resize_mask_to_match_flux_map(mask, flux_map):
+def resize_mask(mask, height, width):
     """
     Resizes the mask to match the dimensions of the flux map.
     """
-    flux_map_height, flux_map_width = flux_map.shape
-    return cv2.resize(mask, (flux_map_width, flux_map_height), interpolation=cv2.INTER_NEAREST)
+    # flux_map_height, flux_map_width = flux_map.shape
+    return cv2.resize(mask, (width, height), interpolation=cv2.INTER_CUBIC)
 
 def get_combined_mask(building_mask, detection_mask, display=False):
     if building_mask.shape != detection_mask.shape:
@@ -264,13 +264,16 @@ def process_address(address_path, detection_results_path, results_df, detected_a
     """
     address_name = os.path.basename(address_path)
     if address_name in detected_addresses:
-        ann_path = os.path.join(detection_results_path, f'rgb_{address_name}.txt')
-
+        img_name = f'rgb_{address_name}'
+        ann_path = os.path.join(detection_results_path, f'{img_name}.txt')
+        img_path = os.path.join(detection_results_path, '..', '..', 'images', f'{img_name}.jpg')
+        # img_path = os.path.join(detection_results_path, '..', f'{img_name}.jpg')
+        # TODO: visualize and save visualized detection results on image
         # Load necessary data
         with rasterio.open(os.path.join(address_path, f'monthlyFlux_{address_name}.tif')) as src_flux, \
              rasterio.open(os.path.join(address_path, f'mask_{address_name}.tif')) as src_mask, \
              rasterio.open(os.path.join(address_path, f'rgb_{address_name}.tif')) as src_img:
-             
+            
             building_mask = src_mask.read(1)  # Assuming mask is single-band
             main_building_mask = get_main_building_mask(building_mask)
             detection_mask = generate_detection_mask(src_img.name, ann_path)
@@ -280,11 +283,12 @@ def process_address(address_path, detection_results_path, results_df, detected_a
             
             # Resize main_building_mask and detection_mask if they don't match the flux map size
             if main_building_mask.shape != sample_flux_map.shape:
-                main_building_mask = resize_mask_to_match_flux_map(main_building_mask, sample_flux_map)
+                main_building_mask = resize_mask(main_building_mask, sample_flux_map.shape[0], sample_flux_map.shape[1])
             if detection_mask.shape != sample_flux_map.shape:
-                detection_mask = resize_mask_to_match_flux_map(detection_mask, sample_flux_map)
+                detection_mask = resize_mask(detection_mask, sample_flux_map.shape[0], sample_flux_map.shape[1])
             
-            combined_mask = get_combined_mask(main_building_mask, detection_mask, display=True)
+            combined_mask = get_combined_mask(main_building_mask, detection_mask, display=False)
+            visualize_results(img_path, combined_mask)
             panel_area = count_area(combined_mask)
 
             monthly_flux = []
@@ -293,7 +297,7 @@ def process_address(address_path, detection_results_path, results_df, detected_a
                 
                 # Ensure combined_mask matches the current month_flux_map dimensions
                 if combined_mask.shape != month_flux_map.shape:
-                    combined_mask = resize_mask_to_match_flux_map(combined_mask, month_flux_map)
+                    combined_mask = resize_mask(combined_mask, month_flux_map.shape[0], month_flux_map.shape[1])
                 
                 flux = get_masked_monthly_flux(combined_mask, month_flux_map)
                 monthly_flux.append(flux)
@@ -302,10 +306,49 @@ def process_address(address_path, detection_results_path, results_df, detected_a
             results_df.loc[len(results_df)] = [address_name, panel_area] + monthly_flux + [annual_flux]
 
 # TODO: add individual address masked detetction visualization
-def visualize_results(ann_path, img_path, mask_path):
-    with rasterio.open(mask_path) as src_mask:
-        building_mask = src_mask.read(1)  # Assuming mask is single-band
+def visualize_results(img_path, combined_mask):
+    """
+    Visualizes the combined mask over the image, draws a bounding box around the masked area, 
+    and saves the result.
 
+    Args:
+    img_path (str): Path to the original image file.
+    combined_mask (numpy.ndarray): The combined mask to overlay on the image.
+    """
+    img_name = os.path.basename(img_path)
+    save_img_dir = os.path.join(os.path.dirname(img_path), '..', 'detection_results', 'images_masked')
+    os.makedirs(save_img_dir, exist_ok=True)
+    save_img_path = os.path.join(save_img_dir, f"masked_{img_name}")
+
+    # Read the image
+    image = cv2.imread(img_path, cv2.IMREAD_COLOR)
+    if image is None:
+        raise FileNotFoundError(f"The image at {img_path} could not be loaded.")
+    
+    # Ensure the mask is the same size as the image
+    if combined_mask.shape != image.shape[:2]:
+        combined_mask = resize_mask(combined_mask, image.shape[0], image.shape[1])
+    
+    # Normalize the mask to ensure it is 0 or 1
+    combined_mask = combined_mask / np.max(combined_mask)
+    
+    # Convert the combined mask to a color overlay (red)
+    mask_color = np.zeros_like(image)
+    mask_color[:, :, 2] = combined_mask * 255  # red channel
+
+    # Create a semi-transparent overlay by blending the mask with the image
+    overlay = cv2.addWeighted(image, 1.0, mask_color, 0.3, 0)
+
+    # Find contours of the combined mask to draw the bounding box
+    contours, _ = cv2.findContours(np.uint8(combined_mask * 255), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    # Draw bounding box around the contours
+    for cnt in contours:
+        x, y, w, h = cv2.boundingRect(cnt)
+        cv2.rectangle(overlay, (x, y), (x + w, y + h), (0, 255, 0), 1)  # Red bounding box
+
+    # Save the result
+    cv2.imwrite(save_img_path, overlay)
 
 def run_detection_and_analysis(data_root, model_path, save_img=False, save_crop=False, batch_size=30, conf=0.1, iou=0.7, img_size=640):
     """
@@ -351,4 +394,3 @@ def run_detection_and_analysis(data_root, model_path, save_img=False, save_crop=
     # Save the DataFrame
     results_df.to_csv(os.path.join(data_root, 'solar_flux_results.csv'), index=False)
     print("Results saved to solar_flux_results.csv")
-
