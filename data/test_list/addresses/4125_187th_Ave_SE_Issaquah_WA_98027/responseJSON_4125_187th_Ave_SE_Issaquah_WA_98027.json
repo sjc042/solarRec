@@ -1,0 +1,38 @@
+{
+    "imageCoord": "47.5702045 -122.0913279",
+    "imageRes": "0.25",
+    "imageAreaCoverage": "70",
+    "dsm_fname": "dsm_4125_187th_Ave_SE_Issaquah_WA_98027.tif",
+    "mask_fname": "mask_4125_187th_Ave_SE_Issaquah_WA_98027.tif",
+    "monthlyFlux_fname": "monthlyFlux_4125_187th_Ave_SE_Issaquah_WA_98027.tif",
+    "imageryDate": {
+        "year": 2016,
+        "month": 7,
+        "day": 29
+    },
+    "imageryProcessedDate": {
+        "year": 2021,
+        "month": 2,
+        "day": 15
+    },
+    "dsmUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=4fc9f27b4ffb881ca1e7a1b6414b5d49-b55323c080051473482c3f5bfc6bc060",
+    "rgbUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=6f4ef8473e91744ffa2c7950e1aa3907-0507116b064991463ed39f284878530b",
+    "maskUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=ed069c9bf9b0950f7f5dc799f6bee458-0a74d49622b51d7819f124f6ea0f4dab",
+    "annualFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=35bf6620911522015ee79ec337e8c3ac-d6e6d65b91449c816893e363d8bdb776",
+    "monthlyFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=784cd6cc2915cade36d0d5e384e16ff7-20b5e005f0b94de6f136b60da8353641",
+    "hourlyShadeUrls": [
+        "https://solar.googleapis.com/v1/geoTiff:get?id=0dfdfc75c2656704ca1587196e4baf81-b7f7c6410082c71ca77412ad134269f8",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=b879a7c092e39b3ddec47b3015a6f054-fbef2a5e6bb27b3851e42bf33d49fb86",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=8d4cec653ce371dc5ba25cae0eaa2670-6129a4c51460e18b514173634335dc0b",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=f226f8cc4e8e9399839d53856ae5ffd8-9e0bfbc4e7645b02bf8d88a3703b8f5f",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=bd61245edccd3dc37f2c03b16c02bb21-fde0ed9f5b135ea5e61e65004c86c7c2",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=02ec3e6c6302fe5a7ff09d9b30ebb429-2364282fa4aa3df1fa87a1285f3f9909",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=3e9936fd5e5a3e5c95c5109a25a7088e-391910120113d7f9e16efbb6d8aae533",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=9d6ffac452f9fdd6f5238911099b5d42-5a3705ca36bbab0096caf415a3a953e5",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=7a2c68ebcec29c786d399f12ad16d99c-e7a1a9f711c766c0eeaa58d33ff34d6c",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=c8450bd12647b16fbe51bc8843c5239a-fdbce41b8aea0a1e11dd8d7c5f759432",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=e57bd82fb8690f6d527ac5f26a94e403-9b8f5cf6a792fd5529a1084b5fdf512f",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=b6d1ac475714ab8628855412d892510c-5762879f4cd84da47e6f1cab3925b610"
+    ],
+    "imageryQuality": "HIGH"
+}

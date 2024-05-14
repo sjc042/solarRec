@@ -1,0 +1,38 @@
+{
+    "imageCoord": "37.6781982 -121.8824053",
+    "imageRes": "0.25",
+    "imageAreaCoverage": "70",
+    "dsm_fname": "dsm_4872_Canary_Dr_Pleasanton_CA_94566.tif",
+    "mask_fname": "mask_4872_Canary_Dr_Pleasanton_CA_94566.tif",
+    "monthlyFlux_fname": "monthlyFlux_4872_Canary_Dr_Pleasanton_CA_94566.tif",
+    "imageryDate": {
+        "year": 2022,
+        "month": 3,
+        "day": 12
+    },
+    "imageryProcessedDate": {
+        "year": 2022,
+        "month": 9,
+        "day": 27
+    },
+    "dsmUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=370f7fbb4dc20368e7f70f5ef4ae005c-0bdfc444376d19a3cea4ed1f1d707fd3",
+    "rgbUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=70f7ecc321805a5f8fae69db55616c79-d2f807f6f0dbfac43e9f70d3a1087827",
+    "maskUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=e04f149d54d4b2de364940bcf7bff447-4dadaaca76582d455cf473723aa2721b",
+    "annualFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=cb4f63d779a05c444fc80f40bf3d6200-4326b1fbededf3fd16f00abe58f8c7c1",
+    "monthlyFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=85f97cc6e3e388ffd460155343b0f1ff-b4ea651510eef4c5990ebac3586dd24d",
+    "hourlyShadeUrls": [
+        "https://solar.googleapis.com/v1/geoTiff:get?id=579bd25b51c8d59f730dbc9fce9ff566-fba21e63aece2901091497b5b49839f0",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=49a2d562f7472bf811287b80e026e385-863c175e8771ade1e9544cf319612f0b",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=bcbc6b5f35749e965d466f8b8c6268ac-13fe6890bb289db31279b2dff5673a84",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=70fdfafa62810c8465c005fb1f662ac0-3053d2a5855fb4db882be775a75e0fe5",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=4b41e9e731d4fdb8ec167ef13ca8155b-45f934c71d9dd5961b8b84ac943bf9e4",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=c597d68a2bae23dc10ab6bc0d6d46c73-a138b622f4643f454887e03ad88d7fd3",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=5beb7be2ac98d5202c8b5a34d28c51c2-46ec4c93f1da94022c53d42e1d00332f",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=22650dbfbae09a3e670bcba5e15ca3d6-28e43a94032cdaf18b2e3f5c1294f977",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=c0a993a0bc843f15bf9fda91fa3a8960-8536012d2d2ab1fc496e4118cc081308",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=4d950c40ac71718e83d5ce5201bd2292-1682e3c6a896a8b5a69fe02bf690233d",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=69a70de0892dcf1c3bee52c21edccbba-b4b4ad89037415ac6456ae2ec70ad27a",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=ce77785d06b42d336b80d4ea2bfc3c25-563ded534b3d3411b5deec3836e36d2b"
+    ],
+    "imageryQuality": "HIGH"
+}

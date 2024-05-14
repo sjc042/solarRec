@@ -1,0 +1,38 @@
+{
+    "imageCoord": "31.9083762 -81.0469369",
+    "imageRes": "0.25",
+    "imageAreaCoverage": "70",
+    "dsm_fname": "dsm_15_Hobcaw_Ln_Savannah_GA_31411.tif",
+    "mask_fname": "mask_15_Hobcaw_Ln_Savannah_GA_31411.tif",
+    "monthlyFlux_fname": "monthlyFlux_15_Hobcaw_Ln_Savannah_GA_31411.tif",
+    "imageryDate": {
+        "year": 2014,
+        "month": 5,
+        "day": 8
+    },
+    "imageryProcessedDate": {
+        "year": 2021,
+        "month": 2,
+        "day": 10
+    },
+    "dsmUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=f78809c7b487512c04891033b047e66b-d716dfb94517e66e043ae5ec8a0fc3ff",
+    "rgbUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=ccd81965d5e8a3e3ffb5de73efe6d267-41d3618e6cb885afe327300e11f6da0f",
+    "maskUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=1599d572ddce0d1a0efc3b37f53307fd-efb279b9f208da02f452e64ccb5769a4",
+    "annualFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=c9ab5ea0ab96d1defcc32d424086ac97-f54e189a86ce961ff00ebad51cba6e5d",
+    "monthlyFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=925fdfba829dae83bb7aafe0c468f306-146dd230fdc912902afcce33bc92eb71",
+    "hourlyShadeUrls": [
+        "https://solar.googleapis.com/v1/geoTiff:get?id=10e6f6905d58458b66d8387f20d56343-93e7512244c7a4d729b8a8ef4a62b428",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=085bfb60088a124dc99c884e27fb3c22-9cb148d1a2e6a174afce493fb5340d49",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=98e5aef2883d2d9155ca53a0f1b08271-dd1809cffd77eac23eea4c898f3b9552",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=49d3ffdefeb1470f5f111b19b65dbea6-05448eb640fff36fc3ae3836e1a5cfb2",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=be0dd0e353c2ada680dbb49580d1d4b9-62759e93e616f45960f6cc694b2bf2a4",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=633762102e64edf2d4a608774f97dbc3-150d83194c939e0445317c13032778c6",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=27b2ac1b51925b585e42021553bea486-84ed496164662a55ff1d9371fe7ecfff",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=d775ed2b180d77c851c458314ce162c3-35d6c551e1036b8f533e5a4b3657adb8",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=3869025023d1d0403bdac9a48fdb6277-d01aed5eb79afa2b438014a5ba47b06e",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=ad7111aa9c267af97d0a8a5707ea6d65-0cb49173b5df5a821dc111fcdbb38ead",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=c4cbec71058c3e26d8a854c131079d48-c200504e09259cea52f8a239244d2cc9",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=b0e3c9167689420312ca8c67fae65d19-7955989ace5ff73bce24824f896eaecf"
+    ],
+    "imageryQuality": "HIGH"
+}

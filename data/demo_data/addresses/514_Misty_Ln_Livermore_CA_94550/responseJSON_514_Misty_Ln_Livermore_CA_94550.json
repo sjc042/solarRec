@@ -1,0 +1,38 @@
+{
+    "imageCoord": "37.702376 -121.7153877",
+    "imageRes": "0.25",
+    "imageAreaCoverage": "70",
+    "dsm_fname": "dsm_514_Misty_Ln_Livermore_CA_94550.tif",
+    "mask_fname": "mask_514_Misty_Ln_Livermore_CA_94550.tif",
+    "monthlyFlux_fname": "monthlyFlux_514_Misty_Ln_Livermore_CA_94550.tif",
+    "imageryDate": {
+        "year": 2022,
+        "month": 3,
+        "day": 12
+    },
+    "imageryProcessedDate": {
+        "year": 2022,
+        "month": 9,
+        "day": 27
+    },
+    "dsmUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=bd04381489c63201e07d57b5f257563d-0439e3639e5000573fc0cc6e0c209877",
+    "rgbUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=25f12d7e8bbe10df5b37cd770cc0cd94-089887ed23345a16b0b1dd4adf4a568a",
+    "maskUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=7506a265b247fd5d6ae96afe7f766f7b-29762f941c0bc013503b805f601650e2",
+    "annualFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=de91db549f15711eb55115f1d17b662d-221d4472274dcf7ef50d04023f591980",
+    "monthlyFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=bd740a2af81e23adf593440b101eae92-9b5ca4b6d94b07d4400a54c6a437eb8e",
+    "hourlyShadeUrls": [
+        "https://solar.googleapis.com/v1/geoTiff:get?id=446ea2d9e8a519b12b7c6127a34aa3da-4b8e1cc23faaf04b2b53cf1bfc2153bf",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=2b833ec889d689d3e0f061bc41f544f3-00bb0e8585094fc2930ebd7c72c6d060",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=0475c31a4a467ca1affc970c54345527-83a44fa9bd08eeeae50240c5d5173e72",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=f0bbc3a50459725098f063ebfcf4c80f-7faf5f673159a3254c947572c589ffcd",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=6b196d6c268f16413d7119747afc437e-2e9fd93ee552ebd7b20d5d7ac4a7dabd",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=537172a16f8418b0f8f0b33e6b134176-83589a4cbdffb6cc37145bb7116bde7d",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=817a98b4ae797f9e2781c63adfcb909b-27559c3e74d69687aaa2cef6572610a1",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=f99a20ba57253419a78529aa4f4cbb63-5f333a47abe055c2007b0913a541c23a",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=850feccbaa38c314c520e7a60ca51448-cfa3fba23013b2b3deab3cc1726ac362",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=672f9f6d8e7d7bae33a6609d4c9c01ba-d65acfd99bf402da3483572e2d6f5b09",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=b73fb72973014ae0debbd10669f2984a-6edbefa80443d26d723529ed59087a72",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=f4ab2c0ae1bf4933cd46a43cdc8c0ae7-c33ae515bd6e61348c5d6ed632a045bd"
+    ],
+    "imageryQuality": "HIGH"
+}

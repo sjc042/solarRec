@@ -1,0 +1,38 @@
+{
+    "imageCoord": "37.5222183 -121.9757234",
+    "imageRes": "0.25",
+    "imageAreaCoverage": "70",
+    "dsm_fname": "dsm_4948_Mansbury_St_Fremont_CA_94538.tif",
+    "mask_fname": "mask_4948_Mansbury_St_Fremont_CA_94538.tif",
+    "monthlyFlux_fname": "monthlyFlux_4948_Mansbury_St_Fremont_CA_94538.tif",
+    "imageryDate": {
+        "year": 2022,
+        "month": 7,
+        "day": 9
+    },
+    "imageryProcessedDate": {
+        "year": 2023,
+        "month": 1,
+        "day": 27
+    },
+    "dsmUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=23d4fc53101f7215783c86d65fcfd95f-237ca1f33e9e807796ba2841d3bdfbfc",
+    "rgbUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=95fa3043d3a2062c54703d7d683ef47c-69db71f245329c3667ab9900a1a70901",
+    "maskUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=6ddbe4f572c9bfd321ddd8bbbc2debc5-29a806ff8f36cb19dd44994a6c3cd3c1",
+    "annualFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=6fd543b091ca875e5a4a740f18c4fb77-64a2a2d5d6a1ce8598c823cb66c65fb9",
+    "monthlyFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=1e083c2839f431a86d3075c1f6bd24c7-61a5adb65b24b0ee64273693e59eb417",
+    "hourlyShadeUrls": [
+        "https://solar.googleapis.com/v1/geoTiff:get?id=04ebc0ab82b71827da5dd7dcb74988e0-372fa65949f0ca0a02281adc41ca6299",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=7d118d03d1197ab55fdfc6038a846508-ed727083cf9eeac311d41b6f22233f8d",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=7fa2f151393a9f61cbca3f2130cc570c-01671219bc1868192608fc04b67c3124",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=21e816d94bdeeef88315c607c77e9973-7e7a5e79e8d2863e6721d84a63557b13",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=6ec1f2aa60daa119c54e14f157265a45-35d949ae47e453f44047b81e26518fd0",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=cb67c9a29f65c9058ca4c1917bba633b-f1d01b8fc3b3d5ca55dbbb036cff81b1",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=f5d4a2bc38e34a3150c2a1066e97a43c-b8f92f6148cb9e0c072dd44d6f4dc8d5",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=d1957784fafdb770bca7fc7ec2691b70-e1548e0175ee12ab1b93d6cbf1527151",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=d5480d74a548b67137fdc2a568dcaeb2-3ff300ecba5897c71d07a5121d48fb55",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=7703bd8d5bd9d4bd1ea6fb357f4049c1-7f9c1b6ea89d1b4f8d3b001d915c872e",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=643e3bd780bbe286194f54c823f432af-29b2e818a1305dd82279f752a816751e",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=6c1e457ee5116ea8fe776915e180a0a3-6841472d66a97d747cf1bf5922f6a307"
+    ],
+    "imageryQuality": "HIGH"
+}

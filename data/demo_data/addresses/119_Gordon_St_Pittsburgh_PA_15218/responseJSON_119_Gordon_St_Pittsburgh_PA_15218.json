@@ -1,0 +1,38 @@
+{
+    "imageCoord": "40.42881 -79.8837242",
+    "imageRes": "0.25",
+    "imageAreaCoverage": "70",
+    "dsm_fname": "dsm_119_Gordon_St_Pittsburgh_PA_15218.tif",
+    "mask_fname": "mask_119_Gordon_St_Pittsburgh_PA_15218.tif",
+    "monthlyFlux_fname": "monthlyFlux_119_Gordon_St_Pittsburgh_PA_15218.tif",
+    "imageryDate": {
+        "year": 2022,
+        "month": 4,
+        "day": 24
+    },
+    "imageryProcessedDate": {
+        "year": 2023,
+        "month": 1,
+        "day": 21
+    },
+    "dsmUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=6c9a0ee9c80890a71a2adfa8593bc81d-150d748023ad43b464464b1f5797ff34",
+    "rgbUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=4b1415e804fdd1d0e038875bc83b3908-80ea751fdc052a26300942937af9d3df",
+    "maskUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=6247b7d373e7fec6b5ea23fce5271319-1aa2407c952f82ef77f210c444adccbd",
+    "annualFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=3f0a26857ab898d70872734cc74e7be7-504f369f736a55c0ec3452f8d00233e9",
+    "monthlyFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=a8f722fb95535321730e490e6469bb46-045aefba9ba9218a24aa078983cf25f3",
+    "hourlyShadeUrls": [
+        "https://solar.googleapis.com/v1/geoTiff:get?id=ecfeed79a04c97bdd5bb593c49d92882-02ed154ea6792135ab5657e87854e74f",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=d205b119e60a835d307177fdb6d309d0-b6f3c124cc4f033d3b03f2d72809af5d",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=7ffda4a773ad6c8a6f5197d832ae42e8-7a98f1b9b2a1ea37ed020c03ad6bc7a9",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=07666a3acca738312e024d56c0f2eebc-774183f395219fd3358014fb34deddb2",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=ca1f537cc78467ca5ff8497861e4df44-098f3f83093ea7e6a5f8a475c631edd9",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=c805d01b8900c2f992a5ad341bb3fd67-425a0c8f482337bb9cb3073a2ba3cf0a",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=e7f009d414423da31fb8e11084f7a163-5693711354efa35af899f325568b9ad3",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=bee286ac00bdf061388c487e6a838730-a8fc9799d1899638dce6bb8bae0b180c",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=99b884b5d95e7860e7949583f4171d34-bcf0d3ad4d3697459926e0d87b0b442a",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=0f59ce2135af8d36b3702d866c5ed9f9-8c8f92093e2921d19fbc52efc2734cb0",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=4007c8263ecdb42c34e53babedb24594-cb0ff5b0185f26e4e527c584409273ab",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=394ec3d41e8336da9c58e6e67530320d-2088249292702eed8a7e0bbdb23ff18f"
+    ],
+    "imageryQuality": "HIGH"
+}
