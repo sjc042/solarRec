@@ -28,11 +28,12 @@ def test3_addressTXT():
 def test4_coordinateGrid():
     height = 5
     width = 5
-    coordinate_list = generate_grid((47.6326, -122.2133), height, width)
-    save_dir = '/home/psc/Desktop/solarRec/data/test_coords'
-    query_from_API(coordinate_list, save_dir=save_dir)
-    model_path = '/home/psc/Desktop/solarRec/detection/checkpoints/yolov8l-seg_imgsz-640_100-epochs_batch-28_conf-0.5_iou-0.5_optimizer-auto_pretrain-coco_train_data-seg2000.pt'
-    run_detection_and_analysis(save_dir, model_path, save_img=True, conf=0.1)
+    # coordinate_list = generate_grid((47.6326, -122.2133), height, width)
+    # save_dir = '/home/psc/Desktop/solarRec/data/test_coords'
+    save_dir = r"D:\solarRec\solarRec\data\test_grid"
+    # query_from_API(coordinate_list, save_dir=save_dir)
+    model_path = r"D:\solarRec\solarRec\detection\checkpoints\yolov8l-seg_imgsz-640_100-epochs_batch-28_conf-0.5_iou-0.5_optimizer-auto_pretrain-coco_train_data-seg2000.pt"
+    run_detection_and_analysis(save_dir, model_path, save_img=True, conf=0.1, process_grid=True)
 
 def main():
     test4_coordinateGrid()

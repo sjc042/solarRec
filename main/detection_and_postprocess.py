@@ -84,8 +84,9 @@ def generate_detection_mask(image_path, annotation_path):
                 
                 points = np.array([(int(x * width), int(y * height))
                                 for x, y in zip(coords[0::2], coords[1::2])], dtype=np.int32)
-
-                cv2.fillPoly(mask, [points], color=255)
+                
+                if len(points) != 0:
+                    cv2.fillPoly(mask, [points], color=255)
         return mask
 
     except FileNotFoundError as e:
@@ -229,9 +230,6 @@ def detect_solar_panel(model_path, img_dir,
     if not os.path.exists(img_dir):
         raise FileNotFoundError(f"Image directory '{img_dir}' not found.")
 
-    # model_exp_name = 'yolo' + model_path.split('yolo')[1].split('/')[0].split('.pt')[0]
-    # split = os.path.basename(os.path.dirname(img_dir))
-    # exp_name = '_'.join(["predict", split, f'conf-{conf}', f'iou-{iou}', model_exp_name])
     exp_name = 'detection_results'
 
     source = os.path.join(img_dir, '*.jpg')
@@ -253,9 +251,9 @@ def detect_solar_panel(model_path, img_dir,
     results_dir = os.path.join(save_dir, exp_name, 'labels')
     return results_dir
 
-def process_address(address_path, detection_results_path, results_df, detected_addresses):
+def process_address(address_path, detection_results_path, results_df, detected_addresses, single_building=False):
     """
-    Process detection results along with solar information for a given address 
+    Process detection results and corresponding solar information for a given address 
     and updates the results DataFrame.
 
     Args:
@@ -267,15 +265,17 @@ def process_address(address_path, detection_results_path, results_df, detected_a
         img_name = f'rgb_{address_name}'
         ann_path = os.path.join(detection_results_path, f'{img_name}.txt')
         img_path = os.path.join(detection_results_path, '..', '..', 'images', f'{img_name}.jpg')
-        # img_path = os.path.join(detection_results_path, '..', f'{img_name}.jpg')
-        # TODO: visualize and save visualized detection results on image
         # Load necessary data
         with rasterio.open(os.path.join(address_path, f'monthlyFlux_{address_name}.tif')) as src_flux, \
              rasterio.open(os.path.join(address_path, f'mask_{address_name}.tif')) as src_mask, \
              rasterio.open(os.path.join(address_path, f'rgb_{address_name}.tif')) as src_img:
             
             building_mask = src_mask.read(1)  # Assuming mask is single-band
-            main_building_mask = get_main_building_mask(building_mask)
+            if single_building:
+                main_building_mask = get_main_building_mask(building_mask)
+            else:
+                main_building_mask = building_mask
+            
             detection_mask = generate_detection_mask(src_img.name, ann_path)
 
             # Use the first month's flux map to determine the dimensions for resizing
@@ -305,7 +305,6 @@ def process_address(address_path, detection_results_path, results_df, detected_a
             annual_flux = sum(monthly_flux)
             results_df.loc[len(results_df)] = [address_name, panel_area] + monthly_flux + [annual_flux]
 
-# TODO: add individual address masked detetction visualization
 def visualize_results(img_path, combined_mask):
     """
     Visualizes the combined mask over the image, draws a bounding box around the masked area, 
@@ -350,7 +349,7 @@ def visualize_results(img_path, combined_mask):
     # Save the result
     cv2.imwrite(save_img_path, overlay)
 
-def run_detection_and_analysis(data_root, model_path, save_img=False, save_crop=False, batch_size=30, conf=0.1, iou=0.7, img_size=640):
+def run_detection_and_analysis(data_root, model_path, save_img=False, save_crop=False, batch_size=30, conf=0.1, iou=0.7, img_size=640, process_grid=False):
     """
     Run YOLO model prediction and process detection results with relevant solar information.
 
@@ -389,7 +388,7 @@ def run_detection_and_analysis(data_root, model_path, save_img=False, save_crop=
     # Process each address
     for address in os.listdir(address_dir):
         address_path = os.path.join(address_dir, address)
-        process_address(address_path, detection_results_path, results_df, detected_addresses)
+        process_address(address_path, detection_results_path, results_df, detected_addresses, single_building=process_grid)
 
     # Save the DataFrame
     results_df.to_csv(os.path.join(data_root, 'solar_flux_results.csv'), index=False)
