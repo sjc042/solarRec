@@ -1,0 +1,38 @@
+{
+    "imageCoord": "47.63385766841201 -122.21516639796336",
+    "imageRes": "0.25",
+    "imageAreaCoverage": "70",
+    "dsm_fname": "dsm_lat47.633858_long-122.215166.tif",
+    "mask_fname": "mask_lat47.633858_long-122.215166.tif",
+    "monthlyFlux_fname": "monthlyFlux_lat47.633858_long-122.215166.tif",
+    "imageryDate": {
+        "year": 2022,
+        "month": 8,
+        "day": 22
+    },
+    "imageryProcessedDate": {
+        "year": 2023,
+        "month": 1,
+        "day": 20
+    },
+    "dsmUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=84526029c434653ef2e812e4198624bd-2905aca31f5d8f9e6bfe8094fb1bc653",
+    "rgbUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=7ba7a8ae6788297359bbdce15d94fced-72bf007c89f57aeecd2d6936426b728f",
+    "maskUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=d26d38c43a6cb064d623de122cf90d9b-bc6e3e4647bb6b6c3399a71393818f48",
+    "annualFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=3dcd4bdfbf23932f022f01d21213d753-02d49674c1d9ab73efeeff68ffd1e844",
+    "monthlyFluxUrl": "https://solar.googleapis.com/v1/geoTiff:get?id=2b54ab3761cc3052f2d428e1839c80f5-8868c65b18158a85ea380931fdafd9cb",
+    "hourlyShadeUrls": [
+        "https://solar.googleapis.com/v1/geoTiff:get?id=66e71dec7054cda3ee2ee542f8ed74c6-5b016632c6483b591235e6c4ba5f6b1a",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=bd1be75f9cea673e249c96cb7006477e-8d7827d01c300e73aac47aa0ca606c71",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=d25bb09b313c641c8449b3a14dff70e8-567c648aead0f95e9028ab77b5a14057",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=a59eb051d3f92b80716e61f4d8e8880c-c401cde5e14c12dc85f0d15d2241d8ab",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=ac3e6bbd5d1cf2d68ff8bf1d0d25935a-c75686523697fdd1870d4b7b427e8a08",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=fcc707d6fd1f5aa377e3309ba5710d1d-69e3340ba993e052153301cc7308212d",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=e24aa30f880b618eb4061863dc633762-82605eab5223a168e4154b0e5fbe9f27",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=c7dc521aabff67ab13d52404d5a97bec-714481bf9584e2d2709f381bfeabf25b",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=9ba4f7f19863889865a5a13953398c60-a908ed3a99e06e3060bccd3a7f18cd18",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=c456548aa5bacdc219b67f156553d187-ade333f02d9368f3918877c9bc3b57cd",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=fda4b313283a4e7904f0259f3a576711-ff80ade3afcbcde2492f1096e8b68117",
+        "https://solar.googleapis.com/v1/geoTiff:get?id=78bd30b2dc3f0643953bcde61465a618-78b8f34684a4f3763ff2d85f9ea05a66"
+    ],
+    "imageryQuality": "HIGH"
+}
