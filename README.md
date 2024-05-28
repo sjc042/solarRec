@@ -17,6 +17,8 @@ This UW Capstone project (course EE497/598) is designed to acquire, process, and
 - For our instance segmentation dataset with images collected from Google Solar: https://universe.roboflow.com/solarrecmoreimage/solarrecseg-y4it9
 - For bouding box dataset derived from [Duke University's dataset (Bradley et al.)](http://dx.doi.org/10.6084/m9.figshare.3385780.v1): https://universe.roboflow.com/solarrecmoreimage/duke-solar
 
+<!-- TODO: include overview of custom instance segmentation dataset. -->
+
 ### Installation
 Follow these steps to set up the project environment:
 
@@ -40,9 +42,12 @@ Navigate to the cloned project folder and install the necessary Python packages 
     cd solarRec
     pip install -r requirements.txt
     ```
+5. **Save Google Solar API to env file**  
+Navigate to main folder and create .env file with added line: `'GOOGLE_SOLAR_API_KEY' = '{your_key}'`
+
 **DEV NOTE**:  
 - requirements.txt to be modified
-- need to add link to roboflow dataset
+- include overview of custom instance segmentation dataset
 
 
 ## Usage
@@ -76,8 +81,6 @@ Navigate to the cloned project folder and install the necessary Python packages 
             - `mask_address2.tif`
             - `address2.json`
         - ...
-
-**DEV NOTE: share dataset on drive or other sources.**
 
 ## Documentation
 - User Manual: Detailed instructions on system operation and configuration.
