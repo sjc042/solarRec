@@ -46,9 +46,8 @@ Navigate to the cloned project folder and install the necessary Python packages 
 Navigate to main folder and create .env file with added line: `'GOOGLE_SOLAR_API_KEY' = '{your_key}'`
 
 **DEV NOTE**:  
-- requirements.txt to be modified
 - include overview of custom instance segmentation dataset
-
+- add images for demo and results
 
 ## Usage
 1. Configure the API keys for Google Solar API in the configuration file.
