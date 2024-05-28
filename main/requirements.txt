@@ -1,5 +1,10 @@
-ultralytics
 pandas
-pillow
+geopy
+requests
 numpy
-roboflow
+Pillow
+rasterio
+python-dotenv
+matplotlib
+opencv-python
+ultralytics
