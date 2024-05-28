@@ -95,13 +95,18 @@ This project is licensed under the AGPL-3.0 License - see the [LICENSE.txt](LICE
 - Quality Assurance: Watt-Watchers team
 - Developers and all contributors who have invested their time and effort.
 
+## References
+1. Bradbury, Kyle; Saboo, Raghav; Malof, Jordan; Johnson, Timothy; Devarajan, Arjun; Zhang, Wuming; et al. (2016). Distributed Solar Photovoltaic Array Location and Extent Data  Set for Remote Sensing Object Identification. figshare. Dataset. https://doi.org/10.6084/m9.figshare.3385780.v1
+2. Jocher, G., Chaurasia, A., & Qiu, J. (2023). Ultralytics YOLO (Version 8.0.0) [Computer software]. https://github.com/ultralytics/ultralytics
+3. Kirillov, A., Mintun, E., Ravi, N., Mao, H., Rolland, C., Gustafson, L., ... & Girshick, R. (2023). Segment anything. In Proceedings of the IEEE/CVF International Conference on Computer Vision (pp. 4015-4026).
+
 ## Contact
 For any inquiries, please contact [cielsun042@gmail.com](mailto:cielsun042@gmail.com).
 
 ## Appendix
 - **A**: Glossary
 - **B**: Acronyms
-- BTM: Behind-The-Meter
-- PV: Photovoltaic
-- DSM: Digital Surface Model
-- AP: Average Precision
+    - BTM: Behind-The-Meter
+    - PV: Photovoltaic
+    - DSM: Digital Surface Model
+    - AP: Average Precision
