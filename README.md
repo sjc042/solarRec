@@ -87,7 +87,7 @@ Navigate to the cloned project folder and install the necessary Python packages 
 Contributions to the project are welcome. Please ensure to follow the best practices and coding standards outlined in the contribution guidelines.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
+This project is licensed under the AGPL-3.0 License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
 ## Acknowledgements
 - Mentors: Anil Jampala (PSC), David Thomas (PSC), Daniel S Kirschen (UW)
