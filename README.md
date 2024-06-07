@@ -94,8 +94,7 @@ This project is licensed under the AGPL-3.0 License - see the [LICENSE.txt](LICE
 ## Acknowledgements
 - Mentors: Anil Jampala (PSC), David Thomas (PSC), Daniel S Kirschen (UW)
 - Capstone TA: Mingfei Chen
-- Quality Assurance: Watt-Watchers team
-- Developers and all contributors who have invested their time and effort.
+- Watt-Watchers teammembers: Riley Estes, Victoria Nguyen, Marcel Ramirez, AJ Solano, Ciel Sun, Larry Tran
 
 ## References
 1. Bradbury, Kyle; Saboo, Raghav; Malof, Jordan; Johnson, Timothy; Devarajan, Arjun; Zhang, Wuming; et al. (2016). Distributed Solar Photovoltaic Array Location and Extent Data  Set for Remote Sensing Object Identification. figshare. Dataset. https://doi.org/10.6084/m9.figshare.3385780.v1
